@@ -54,3 +54,8 @@ F:\Sheetal\New Project\CMS\CMS.Common\bin\Debug\CMS.Common.dll
 F:\Sheetal\New Project\CMS\CMS.Common\bin\Debug\CMS.Common.pdb
 F:\Sheetal\New Project\CMS\CMS.Common\obj\Debug\CMS.Common.dll
 F:\Sheetal\New Project\CMS\CMS.Common\obj\Debug\CMS.Common.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Common\bin\Debug\CMS.Common.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Common\bin\Debug\CMS.Common.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Common\obj\Debug\CMS.Common.csprojResolveAssemblyReference.cache
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Common\obj\Debug\CMS.Common.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Common\obj\Debug\CMS.Common.pdb

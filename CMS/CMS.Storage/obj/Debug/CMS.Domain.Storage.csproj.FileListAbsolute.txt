@@ -174,3 +174,13 @@ F:\Sheetal\New Project\CMS\CMS.Storage\bin\Debug\CMS.Domain.pdb
 F:\Sheetal\New Project\CMS\CMS.Storage\obj\Debug\CMS.Domain.Storage.csprojResolveAssemblyReference.cache
 F:\Sheetal\New Project\CMS\CMS.Storage\obj\Debug\CMS.Domain.Storage.dll
 F:\Sheetal\New Project\CMS\CMS.Storage\obj\Debug\CMS.Domain.Storage.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\bin\Debug\CMS.Domain.Storage.dll.config
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\bin\Debug\CMS.Domain.Storage.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\bin\Debug\CMS.Domain.Storage.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\bin\Debug\CMS.Common.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\bin\Debug\CMS.Domain.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\bin\Debug\CMS.Common.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\bin\Debug\CMS.Domain.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\obj\Debug\CMS.Domain.Storage.csprojResolveAssemblyReference.cache
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\obj\Debug\CMS.Domain.Storage.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Storage\obj\Debug\CMS.Domain.Storage.pdb

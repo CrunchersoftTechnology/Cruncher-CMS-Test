@@ -50,7 +50,7 @@ namespace CMS.Web.Helpers
             model.SenderId = ConfigurationManager.AppSettings[Constants.SenderId];
             try
             {
-                URL = string.Format("http://103.16.101.52:8080/bulksms/bulksms?username=" + model.UserName + "&password=" + model.Password + "&type=0&dlr=1&destination=" + model.SendTo + "&source=" + model.SenderId + "&message=" + model.Message + "");
+              //  URL = string.Format("http://103.16.101.52:8080/bulksms/bulksms?username=" + model.UserName + "&password=" + model.Password + "&type=0&dlr=1&destination=" + model.SendTo + "&source=" + model.SenderId + "&message=" + model.Message + "");
                 //URL = "http://173.45.76.227/send.aspx?username=" + name + "&pass=" +pwd + "&route=trans1&senderid=" + sid + "&numbers=" + model.SendTo + "&message=" + model.Message + "";
                 WebRequest webrequest;
                 WebResponse webresponse;
@@ -163,8 +163,8 @@ namespace CMS.Web.Helpers
             {
                 var userName = ConfigurationManager.AppSettings[Constants.UserName];
                 var password = ConfigurationManager.AppSettings[Constants.SmsPassword];
-                String URL = "http://173.45.76.227/balance.aspx?username=" + userName + "&pass=" + password + "";
-                //String URL = "http://103.16.101.52:8080/CreditCheck/checkcredits?username=" + userName + "&password=" + password + "";
+               // String URL = "http://173.45.76.227/balance.aspx?username=" + userName + "&pass=" + password + "";
+                String URL = "http://103.16.101.52:8080/CreditCheck/checkcredits?username=" + userName + "&password=" + password + "";
                 WebRequest webrequest; WebResponse webresponse;
                 webrequest = HttpWebRequest.Create(URL);//Hit URL Link
                 webrequest.Timeout = 5000;

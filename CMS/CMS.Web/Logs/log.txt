@@ -4945,3 +4945,13 @@ INFO  2020-02-28 15:51:29,977  2966ms LoggingModule+<>c      Info               
 INFO  2020-02-28 15:54:13,583  1524ms LoggingModule+<>c      Info               - auto notification start
 INFO  2020-02-28 16:03:52,357  1746ms LoggingModule+<>c      Info               - auto notification start
 INFO  2020-02-28 16:21:44,956  2860ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 16:39:26,140  2990ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 16:43:11,955  4475ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 16:48:19,636  2166ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 16:59:19,630  2238ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 18:32:45,906  3849ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 18:43:45,472  4361ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 18:43:46,531  5420ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+ERROR 2020-02-28 18:47:02,861 201750ms LoggingModule+<>c      Error              - Invalid URI: The URI is empty.SendMessage 1
+INFO  2020-02-28 18:55:27,289  3238ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 18:55:28,223  4172ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0

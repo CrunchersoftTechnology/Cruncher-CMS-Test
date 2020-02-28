@@ -190,3 +190,19 @@ F:\Sheetal\New Project\CMS\CMS.Domain\bin\Debug\Microsoft.AspNet.Identity.Entity
 F:\Sheetal\New Project\CMS\CMS.Domain\obj\Debug\CMS.Domain.csprojResolveAssemblyReference.cache
 F:\Sheetal\New Project\CMS\CMS.Domain\obj\Debug\CMS.Domain.dll
 F:\Sheetal\New Project\CMS\CMS.Domain\obj\Debug\CMS.Domain.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\CMS.Domain.dll.config
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\CMS.Domain.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\CMS.Domain.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\CMS.Common.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\EntityFramework.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\EntityFramework.SqlServer.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\CMS.Common.pdb
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\EntityFramework.xml
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\EntityFramework.SqlServer.xml
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\obj\Debug\CMS.Domain.csprojResolveAssemblyReference.cache
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\obj\Debug\CMS.Domain.dll
+E:\Krunal\Crunchersoft CMS Test\CMS\CMS.Domain\obj\Debug\CMS.Domain.pdb

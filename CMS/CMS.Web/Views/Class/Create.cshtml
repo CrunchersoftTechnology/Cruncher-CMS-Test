@@ -40,14 +40,6 @@
             </div>
         }
 
-        <div class="form-group">
-            @Html.LabelFor(model => model., htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblSubjectId" })
-            <div class="col-md-3">
-                @Html.DropDownListFor(model => model.SubjectId, new SelectList(Enumerable.Empty<SelectListItem>()), "Select Subject", new { @class = "form-control", @onchange = "getTotalWeightage()" })
-                @Html.ValidationMessageFor(model => model.SubjectId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
 
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblName" })
