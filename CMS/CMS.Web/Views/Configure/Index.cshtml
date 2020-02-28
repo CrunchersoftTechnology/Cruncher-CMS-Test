@@ -1,0 +1,74 @@
+﻿@model IEnumerable <CMS.Domain.Models.Configure>
+@{
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Index";
+}
+<h2>Account Details</h2>
+<p>
+    @Html.ActionLink("Create Setting", "Create")
+    <a href="/Configure/Create" style="display:none; ">Create Setting</a>
+    
+</p><br /><br />
+<table class="table table-bordered table-striped">
+<tr>
+    <th>Class Name
+      
+    </th>
+    <th>Address
+      
+    </th>
+    <th>
+        Email Id
+    </th>
+    <th>
+       Aboutus
+    </th>
+    <th>
+        UserName
+    </th>
+    <th>
+        SenderId
+    </th>
+    <th>
+        Password
+    </th>
+   
+    <th>Action</th>
+</tr>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.address)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.email_id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.aboutus)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.username)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sender_id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.password)
+        </td>
+       
+
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { Id = item.Id }) 
+          
+           
+        </td>
+    </tr>
+}
+
+</table>
