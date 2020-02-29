@@ -4955,3 +4955,122 @@ INFO  2020-02-28 18:43:46,531  5420ms LoggingModule+<>c      Info               
 ERROR 2020-02-28 18:47:02,861 201750ms LoggingModule+<>c      Error              - Invalid URI: The URI is empty.SendMessage 1
 INFO  2020-02-28 18:55:27,289  3238ms LoggingModule+<>c      Info               - auto notification start
 INFO  2020-02-28 18:55:28,223  4172ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 21:52:26,622  2736ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 21:52:32,562  8675ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+ERROR 2020-02-28 21:54:09,701 105815ms LoggingModule+<>c      Error              - Invalid URI: The URI is empty.SendMessage 1
+INFO  2020-02-28 22:11:34,154  2415ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 22:12:30,472 58733ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 22:18:56,619  1523ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 22:19:11,447 16351ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 22:31:57,275  1446ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 22:32:06,506 10676ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 22:38:02,398  2283ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 22:38:14,184 14069ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 22:41:53,882  2268ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 22:42:01,127  9512ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 22:46:15,958  1490ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 22:46:23,304  8836ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 22:58:31,036  2223ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 22:58:36,648  7835ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 23:03:21,260  2202ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 23:03:27,316  8258ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 23:07:57,366  2198ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 23:08:03,609  8441ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 23:09:42,465  2213ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 23:09:48,799  8547ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 23:28:16,706  2288ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 23:28:23,125  8707ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-28 23:49:52,820  2233ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-28 23:49:58,789  8202ms LoggingModule+<>c      Info               - 28-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 00:05:33,374  2209ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 00:05:41,363 10198ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 00:07:56,249  2206ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 00:08:02,565  8523ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+ERROR 2020-02-29 00:10:25,466 151423ms LoggingModule+<>c      Error              - Invalid URI: The URI is empty.SendMessage 1
+INFO  2020-02-29 00:13:52,409  2277ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 00:13:58,575  8443ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 00:16:41,393  2401ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 00:16:47,407  8415ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 00:20:04,593  2178ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 00:20:11,014  8600ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 00:35:03,805  2309ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 00:35:10,173  8677ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 00:44:00,995  2301ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 00:44:06,814  8120ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 10:51:36,709  8323ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 10:52:12,007 43621ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+ERROR 2020-02-29 10:55:12,506 224119ms LoggingModule+<>c      Error              - Invalid URI: The URI is empty.SendMessage 1
+ERROR 2020-02-29 10:56:58,353 329967ms LoggingModule+<>c      Error              - Invalid URI: The URI is empty.SendMessage 1
+INFO  2020-02-29 11:37:47,984  3834ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 11:38:00,426 16276ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 11:40:56,419  2581ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 11:41:08,054 14216ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 11:53:20,531  2506ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 11:53:28,554 10529ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 11:59:11,808  1540ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 12:00:22,473  3076ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 12:01:01,841 42444ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 12:41:41,382  2845ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 12:43:57,541  3699ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 12:44:32,172 38329ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 12:47:10,883  2993ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 12:47:21,779 13890ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 12:51:56,314  2827ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 12:52:09,424 15936ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 12:53:15,645  2241ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 12:53:26,211 12807ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 13:01:00,201 27751ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 13:01:12,628 40179ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 13:06:01,142 23991ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 13:06:13,603 36452ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:12:30,454  4992ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:12:40,906 15444ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:15:04,796  1923ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:15:13,616 10743ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:21:28,566  3405ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:21:37,113 11952ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:27:34,177  4312ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:27:46,131 16266ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:28:57,205  2774ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:33:46,185  2891ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:34:00,009 16716ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:36:49,938  4264ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:36:59,978 14304ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:43:38,096  3224ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:43:46,002 11130ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 14:52:53,681 35962ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 14:53:16,141 58422ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:04:26,849  6812ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:04:37,038 17001ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:07:13,313  4399ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:07:29,458 20544ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:14:40,166 17207ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:14:54,824 31864ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:16:43,478 14572ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:16:58,069 29163ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:21:36,575  5441ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:22:20,479 49345ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:24:52,385  3471ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:25:05,029 16116ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:34:30,432  3015ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:35:03,968 36551ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 15:44:42,034  2492ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:46:33,640  2825ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:53:09,589  2912ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 15:53:18,277 11600ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 16:04:41,556  7433ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 16:05:26,307 52183ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 16:28:13,125  3903ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 16:28:26,548 17326ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 16:31:41,472  3538ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 16:31:55,912 17977ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 16:41:33,254  2684ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 16:41:40,287  9716ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 16:46:39,303  2468ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 16:46:46,285  9451ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 17:42:38,371 54707ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 17:43:37,031 113367ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+INFO  2020-02-29 17:48:05,634  6768ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 17:53:24,429  3145ms LoggingModule+<>c      Info               - auto notification start
+INFO  2020-02-29 17:53:26,635  5351ms LoggingModule+<>c      Info               - 29-02-2020 00:00:00 notificationsToSend count   0
+ERROR 2020-02-29 17:54:51,168 89884ms LoggingModule+<>c      Error              - Invalid URI: The URI is empty.SendMessage 1

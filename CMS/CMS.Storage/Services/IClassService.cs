@@ -9,6 +9,7 @@ namespace CMS.Domain.Storage.Services
     public interface IClassService
     {
         IEnumerable<ClassProjection> GetClasses();
+        IEnumerable<ClassProjection> GetClassesByClientId(int ClientId);
         CMSResult Save(Class newClass);
         CMSResult Update(Class oldClass);
         CMSResult Delete(int id);

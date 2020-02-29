@@ -361,10 +361,11 @@ namespace CMS.Web
                  {
                      var options = context.QueryOptions;
                      int totalRecords;
+                     int userId = Convert.ToInt32(options.GetPageParameterString("userRole"));
                      var repo = DependencyResolver.Current.GetService<ISchoolService>();
                      string globalSearch = options.GetAdditionalQueryOptionString("search");
                      string sortColumn = options.GetSortColumnData<string>();
-                     var items = repo.GetSchoolData(out totalRecords, options.GetFilterString("SchoolName"),
+                     var items = repo.GetSchoolDataByClientId(out totalRecords, options.GetFilterString("SchoolName"), userId,
                                      options.GetLimitOffset(), options.GetLimitRowcount(),
                          sortColumn, options.SortDirection == SortDirection.Dsc);
                      return new QueryResult<SchoolGridModel>()
@@ -516,9 +517,10 @@ namespace CMS.Web
                 var options = context.QueryOptions;
                 int totalRecords;
                 var repo = DependencyResolver.Current.GetService<IBatchService>();
+                int userId = Convert.ToInt32(options.GetPageParameterString("userRole"));
                 string globalSearch = options.GetAdditionalQueryOptionString("search");
                 string sortColumn = options.GetSortColumnData<string>();
-                var items = repo.GetBatchData(out totalRecords, Convert.ToInt16(options.GetFilterString("ClassName")),
+                var items = repo.GetBatchDataByClientId(out totalRecords, Convert.ToInt16(options.GetFilterString("ClassName")), userId,
                                 options.GetLimitOffset(), options.GetLimitRowcount(),
                     sortColumn, options.SortDirection == SortDirection.Dsc);
                 return new QueryResult<BatchGridModel>()

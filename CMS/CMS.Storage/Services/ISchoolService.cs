@@ -13,11 +13,19 @@ namespace CMS.Domain.Storage.Services
     public interface ISchoolService
     {
         IEnumerable<SchoolProjection> GetAllSchools();
+
         SchoolProjection GetSchoolById(int schoolId);
+
         CMSResult Save(School newSchool);
+
         CMSResult Update(School oldSchool);
+
         CMSResult Delete(int id);
+
         IEnumerable<SchoolGridModel> GetSchoolData(out int totalRecords, string Name,
         int? limitOffset, int? limitRowCount, string orderBy, bool desc);
+
+        IEnumerable<SchoolGridModel> GetSchoolDataByClientId(out int totalRecords, string SchoolName, int userId,
+     int? limitOffset, int? limitRowCount, string orderBy, bool desc);
     }
 }

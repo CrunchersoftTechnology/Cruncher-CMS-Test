@@ -1,9 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace CMS.Web.ViewModels
 {
     public class SchoolViewModel
     {
+
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
+
+
         public int SchoolId { get; set; }
 
         [Required]
@@ -17,5 +25,12 @@ namespace CMS.Web.ViewModels
         [MinLength(1, ErrorMessage = "The field Center Number must be a minimum length of '1' and maximum length of '50'.")]
         [MaxLength(50, ErrorMessage = "The field Center Number must be a minimum length of '1' and maximum length of '50'.")]
         public string CenterNumber { get; set; }
+
+        public string CurrentUserRole { get; set; }
+
+
+        [Display(Name = "Client")]
+        public IEnumerable<SelectListItem> Clients { get; set; }
+
     }
 }

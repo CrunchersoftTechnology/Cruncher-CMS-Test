@@ -17,6 +17,7 @@ namespace CMS.Domain.Storage.Services
         {
             _repository = repository;
         }
+
         public CMSResult Delete(int id)
         {
             CMSResult result = new CMSResult();
@@ -180,5 +181,59 @@ namespace CMS.Domain.Storage.Services
             }
             return query.ToList();
         }
+
+        public IEnumerable<SchoolGridModel> GetSchoolDataByClientId(out int totalRecords, string Name, int userId,
+     int? limitOffset, int? limitRowCount, string orderBy, bool desc)
+        {
+            int ClientId = userId;
+            var query = _repository.Project<School, IQueryable<SchoolGridModel>>(Schools => (
+                 from b in Schools
+
+                 select new SchoolGridModel
+                 {
+                     UserId = b.UserId,
+                     ClientId = b.ClientId,
+                     SchoolId = b.SchoolId,
+                     SchoolName = b.Name,
+                     //Address = b.Address,
+                     CreatedOn = b.CreatedOn,
+
+                 })).AsQueryable();
+            if (ClientId != 0)
+            {
+                query = query.Where(p => p.ClientId == ClientId);
+            }
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                query = query.Where(p => p.SchoolName.Contains(Name));
+            }
+            totalRecords = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                switch (orderBy)
+                {
+                    case nameof(SchoolGridModel.SchoolName):
+                        if (!desc)
+                            query = query.OrderBy(p => p.SchoolName);
+                        else
+                            query = query.OrderByDescending(p => p.SchoolName);
+                        break;
+                   
+                    default:
+                        if (!desc)
+                            query = query.OrderBy(p => p.CreatedOn);
+                        else
+                            query = query.OrderByDescending(p => p.CreatedOn);
+                        break;
+                }
+            }
+            if (limitOffset.HasValue)
+            {
+                query = query.Skip(limitOffset.Value).Take(limitRowCount.Value);
+            }
+            return query.ToList();
+        }
+
     }
 }

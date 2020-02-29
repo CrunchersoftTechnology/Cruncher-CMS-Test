@@ -45,11 +45,7 @@ namespace CMS.Web.Controllers
 
         // GET: Subject
         public ActionResult Index(int? id)
-        {//var branches = _branchService.GetAllBranches().ToList();
-            //var viewModelList = AutoMapper.Mapper.Map<List<BranchProjection>, BranchViewModel[]>(branches);
-            //return View(viewModelList);
-            //return View();
-
+        {
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
@@ -80,17 +76,12 @@ namespace CMS.Web.Controllers
         { 
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
 
-            /*var classes = _classService.GetClasses().ToList();
+            var classes = _classService.GetClassesByClientId(Convert.ToInt32(projection.ClientId)).ToList();
             var viewModel = new SubjectViewModel();
-            viewModel.Classes = new SelectList(classes, "ClassId", "Name");*/
+            viewModel.Classes = new SelectList(classes, "ClassId", "Name");
 
-            var classList = (from c in _classService.GetClasses()
-                             select new SelectListItem
-                             {
-                                 Value = c.ClassId.ToString(),
-                                 Text = c.Name
-                             }).ToList();
 
             if (roles == "Admin")
             {
@@ -111,13 +102,13 @@ namespace CMS.Web.Controllers
             }
             else if (roles == "Client")
             {
-                var projection = _clientAdminService.GetClientAdminById(roleUserId);
+                //var projection = _clientAdminService.GetClientAdminById(roleUserId);
 
                 ViewBag.ClientId = projection.ClientId;
                 ViewBag.CurrentUserRole = roles;
                 return View(new SubjectViewModel
                 {
-                    Classes = classList,
+                    Classes = viewModel.Classes,
                     CurrentUserRole = roles,
                     ClientId = projection.ClientId,
                     ClientName = projection.ClientName
@@ -153,6 +144,11 @@ namespace CMS.Web.Controllers
 
                 var classList = _classService.GetClasses().Where(x => ClassIds.Contains(x.ClassId)).ToList();
 
+                var className = classList.Select(x => x.Name).ToList();
+
+                viewModel.ClassName = string.Join(",", className);
+
+
                 var result = _subjectService.Save(new Subject { Name = viewModel.Name }, classList, clientId);
                 if (result.Success)
                 {
@@ -169,6 +165,8 @@ namespace CMS.Web.Controllers
             }
             ReturnViewModel(roles, viewModel, clientId, clientName);
             viewModel = new SubjectViewModel();
+            var classes = _classService.GetClasses().ToList();
+            viewModel.Classes = new SelectList(classes, "ClassId", "Name");
 
             return View(viewModel);
         }

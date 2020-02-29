@@ -92,7 +92,7 @@ namespace CMS.Domain.Storage.Services
             CMSResult result = new CMSResult();
             foreach (var cls in classList)
             {
-                var isExists = _repository.Project<Subject, bool>(subjects => (from subj in subjects where subj.Name == subject.Name && subj.ClassId == cls.ClassId && subj.ClientId== subject.ClientId select subj).Any());
+                var isExists = _repository.Project<Subject, bool>(subjects => (from subj in subjects where subj.Name == subject.Name && subj.ClassId == cls.ClassId && subj.ClientId == subject.ClientId select subj).Any());
                 if (isExists)
                 {
                     result.Results.Add(new Result { IsSuccessful = false, Message = string.Format("Subject '{0}' already exists!", subject.Name + " - " + cls.Name) });
@@ -190,6 +190,7 @@ namespace CMS.Domain.Storage.Services
                         else
                             query = query.OrderByDescending(p => p.ClassName);
                         break;
+
                     default:
                         if (!desc)
                             query = query.OrderBy(p => p.CreatedOn);
@@ -205,32 +206,30 @@ namespace CMS.Domain.Storage.Services
             return query.ToList();
         }
 
-        public IEnumerable<SubjectGridModel> GetSubjectDataByClientId(out int totalRecords, string Name, int filterClassName, int userId,int? limitOffset, int? limitRowCount, string orderBy, bool desc)
-        {
-            int ClientId = userId;
-            var query = _repository.Project<Subject, IQueryable<SubjectGridModel>>(Subjects => (
-                 from b in Subjects
 
+
+        public IEnumerable<SubjectGridModel> GetSubjectDataByClientId(out int totalRecords, string Name, int filterClassName,int ClientId,
+        int? limitOffset, int? limitRowCount, string orderBy, bool desc)
+        {
+            var query = _repository.Project<Subject, IQueryable<SubjectGridModel>>(Subjects => (
+                 from s in Subjects
+                 where s.ClientId == ClientId
                  select new SubjectGridModel
                  {
-                     UserId = b.UserId,
-                     ClientId = b.ClientId,
-                     SubjectId = b.SubjectId,
-                     ClassName = b.Name,
-                     CreatedOn = b.CreatedOn,
-
+                     SubjectId = s.SubjectId,
+                     SubjectName = s.Name,
+                     ClassName = s.Class.Name,
+                     ClassId = s.ClassId,
+                     CreatedOn = s.CreatedOn,
                  })).AsQueryable();
-            if (ClientId != 0 && filterClassName != 0)
+
+            if (!string.IsNullOrWhiteSpace(Name))
             {
-                query = query.Where(p => p.ClientId == ClientId &&  p.ClassId == filterClassName);
+                query = query.Where(p => p.SubjectName.Contains(Name) && p.ClientId == ClientId);
             }
             if (filterClassName != 0)
             {
-                query = query.Where(p => p.ClassId == filterClassName && p.ClientId==ClientId);
-            }
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                query = query.Where(p => p.SubjectName.Contains(Name));
+                query = query.Where(p => p.ClassId == filterClassName && p.ClientId == ClientId);
             }
             totalRecords = query.Count();
 
@@ -244,7 +243,14 @@ namespace CMS.Domain.Storage.Services
                         else
                             query = query.OrderByDescending(p => p.SubjectName);
                         break;
-                 
+                    case nameof(SubjectGridModel.ClassName):
+                        if (!desc)
+                            query = query.OrderBy(p => p.ClassName);
+                        else
+                            query = query.OrderByDescending(p => p.ClassName);
+                        break;
+
+
                     default:
                         if (!desc)
                             query = query.OrderBy(p => p.CreatedOn);
@@ -259,6 +265,8 @@ namespace CMS.Domain.Storage.Services
             }
             return query.ToList();
         }
+
+
 
 
 
@@ -274,7 +282,7 @@ namespace CMS.Domain.Storage.Services
                               }).ToArray());
 
         }
-      
+
         public IEnumerable<SubjectProjection> GetSubjectSubjectIds(string selectedSubject)
         {
             var subjectIds = selectedSubject.Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(int.Parse);
@@ -287,6 +295,7 @@ namespace CMS.Domain.Storage.Services
                              }).ToArray());
         }
 
-        
+
+
     }
 }

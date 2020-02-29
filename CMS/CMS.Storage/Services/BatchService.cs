@@ -49,10 +49,10 @@ namespace CMS.Domain.Storage.Services
                             }).ToArray());
         }
 
-        public CMSResult Save(Batch newBatch)
+        public CMSResult Save(Batch newBatch,int ClientId)
         {
             CMSResult result = new CMSResult();
-            var isExists = _repository.Project<Batch, bool>(batches => (from batch in batches where batch.Name == newBatch.Name && batch.ClassId == newBatch.ClassId select batch).Any());
+            var isExists = _repository.Project<Batch, bool>(batches => (from batch in batches where batch.Name == newBatch.Name && batch.ClassId == newBatch.ClassId && batch.ClientId==newBatch.ClientId select batch).Any());
             if (isExists)
             {
                 result.Results.Add(new Result { IsSuccessful = false, Message = string.Format("Batch '{0}' already exists!", newBatch.Name) });
@@ -254,6 +254,63 @@ namespace CMS.Domain.Storage.Services
             }
             return query.ToList();
         }
+
+
+        public IEnumerable<BatchGridModel> GetBatchDataByClientId(out int totalRecords, int filterClassName, int ClientId,
+        int? limitOffset, int? limitRowCount, string orderBy, bool desc)
+        {
+            var query = _repository.Project<Batch, IQueryable<BatchGridModel>>(Batches => (
+                 from b in Batches
+                 where b.ClientId == ClientId
+                 select new BatchGridModel
+                 {
+
+                     BatchId = b.BatchId,
+                     BatchName = b.Name,
+                     ClassName = b.Classes.Name,
+                     InTime = b.InTime,
+                     OutTime = b.OutTime,
+                     ClassId = b.Classes.ClassId,
+                     CreatedOn = b.CreatedOn,
+                 })).AsQueryable();
+
+            if (filterClassName != 0)
+            {
+                query = query.Where(p => p.ClassId == filterClassName && p.ClientId == ClientId);
+            }
+            totalRecords = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                switch (orderBy)
+                {
+                    case nameof(BatchGridModel.BatchName):
+                        if (!desc)
+                            query = query.OrderBy(p => p.BatchName);
+                        else
+                            query = query.OrderByDescending(p => p.BatchName);
+                        break;
+                    case nameof(BatchGridModel.ClassName):
+                        if (!desc)
+                            query = query.OrderBy(p => p.ClassName);
+                        else
+                            query = query.OrderByDescending(p => p.ClassName);
+                        break;
+                    default:
+                        if (!desc)
+                            query = query.OrderBy(p => p.CreatedOn);
+                        else
+                            query = query.OrderByDescending(p => p.CreatedOn);
+                        break;
+                }
+            }
+            if (limitOffset.HasValue)
+            {
+                query = query.Skip(limitOffset.Value).Take(limitRowCount.Value);
+            }
+            return query.ToList();
+        }
+
 
         public IEnumerable<BatchProjection> GetBatchesByBatchIds(string SelectedBatches)
         {

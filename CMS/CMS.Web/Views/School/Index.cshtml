@@ -29,6 +29,6 @@
        Export = true,
        GlobalSearch = false
    })
-        @Html.MVCGrid("SchoolGrid")
+        @Html.MVCGrid("SchoolGrid", new { userRole = ViewBag.userId })
     </div>
 </div>

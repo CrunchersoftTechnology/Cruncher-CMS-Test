@@ -37,7 +37,11 @@ namespace CMS.Web.Automapper
                 .ForMember(dest => dest.Name, opts => opts.MapFrom(src => src.BatchName))
                 .ForMember(dest => dest.ClassId, opts => opts.MapFrom(src => src.ClassId))
                 .ForMember(dest => dest.ClassName, opts => opts.MapFrom(src => src.ClassName))
-                .ForMember(x => x.Classes, y => y.Ignore());
+                .ForMember(x => x.Classes, y => y.Ignore())
+                .ForMember(dest => dest.SelectedClasses, opts => opts.MapFrom(src => src.SelectedClasses))
+              .ForMember(dest => dest.CurrentUserRole, y => y.Ignore())
+                .ForMember(dest => dest.Clients, y => y.Ignore());
+
 
             CreateMap<SubjectProjection, SubjectViewModel>()
                 .ForMember(dest => dest.ClientId, opts => opts.MapFrom(src => src.ClientId))
@@ -435,7 +439,13 @@ namespace CMS.Web.Automapper
 
 
 
-            CreateMap<SchoolProjection, SchoolViewModel>();
+            CreateMap<SchoolProjection, SchoolViewModel>()
+              .ForMember(dest => dest.ClientId, opts => opts.MapFrom(src => src.ClientId))
+                .ForMember(dest => dest.ClientName, opts => opts.MapFrom(src => src.ClientName))
+                .ForMember(dest => dest.SchoolId, opts => opts.MapFrom(src => src.SchoolId))
+                .ForMember(dest => dest.Name, opts => opts.MapFrom(src => src.Name))
+                .ForMember(dest => dest.CurrentUserRole, y => y.Ignore())
+                .ForMember(dest => dest.Clients, y => y.Ignore());
 
             CreateMap<BranchAdminProjection, BranchAdminViewModel>()
                 .ForMember(dest => dest.BId, opts => opts.MapFrom(src => src.AId))

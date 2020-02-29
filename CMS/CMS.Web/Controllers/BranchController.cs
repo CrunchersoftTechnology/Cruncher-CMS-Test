@@ -33,21 +33,9 @@ namespace CMS.Web.Controllers
         // GET: Branch
         public ActionResult Index()
         {
-            //var branches = _branchService.GetAllBranches().ToList();
-            //var viewModelList = AutoMapper.Mapper.Map<List<BranchProjection>, BranchViewModel[]>(branches);
-            //return View(viewModelList);
-            //return View();
-
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
-       
-            /*ViewBag.ClassList = (from c in _clientAdminService.GetClients()
-                                 select new SelectListItem
-                                 {
-                                     Value = c.ClientId.ToString(),
-                                     Text = c.Name
-                                 }).ToList();*/
 
             if (roles == "Admin")
             {

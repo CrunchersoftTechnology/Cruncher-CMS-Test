@@ -28,8 +28,10 @@ namespace CMS.Web.Controllers
         readonly IAspNetRoles _aspNetRolesService;
         readonly IEmailService _emailService;
         readonly IBranchAdminService _branchAdminService;
+        readonly IClientAdminService _clientAdminService;
 
-        public SchoolController(ISchoolService schoolService, ILogger logger, IRepository repository, IAspNetRoles aspNetRolesService, IEmailService emailService, IBranchAdminService branchAdminService)
+
+        public SchoolController(IClientAdminService clientAdminService, ISchoolService schoolService, ILogger logger, IRepository repository, IAspNetRoles aspNetRolesService, IEmailService emailService, IBranchAdminService branchAdminService)
         {
             _schoolService = schoolService;
             _logger = logger;
@@ -37,14 +39,25 @@ namespace CMS.Web.Controllers
             _aspNetRolesService = aspNetRolesService;
             _emailService = emailService;
             _branchAdminService = branchAdminService;
+            _clientAdminService = clientAdminService;
+            
         }
 
         // GET: School
         public ActionResult Index()
         {
-            //var schools = _schoolService.GetAllSchools().ToList();
-            //var viewModelList = AutoMapper.Mapper.Map<List<SchoolProjection>, SchoolViewModel[]>(schools);
-            //return View(viewModelList);
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
+            if (roles == "Admin")
+            {
+                ViewBag.userId = 0;
+            }
+            else
+            {
+                ViewBag.userId = projection.ClientId;
+            }
             return View();
         }
 
@@ -55,9 +68,45 @@ namespace CMS.Web.Controllers
         }
 
         // GET: School/Create
-        public ActionResult Create()
+        public ActionResult Create(int? ClientId)
         {
+
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+
+            if (roles == "Admin")
+            {
+                var clientList = (from b in _clientAdminService.GetClients()
+                                  select new SelectListItem
+                                  {
+                                      Value = b.ClientId.ToString(),
+                                      Text = b.Name
+                                  }).ToList();
+
+                ViewBag.ClientId = null;
+
+                return View(new SchoolViewModel
+                {
+                    Clients = clientList,
+                    CurrentUserRole = roles
+                });
+            }
+            else if (roles == "Client")
+            {
+                var projection = _clientAdminService.GetClientAdminById(roleUserId);
+
+                ViewBag.ClientId = projection.ClientId;
+                ViewBag.CurrentUserRole = roles;
+                return View(new SchoolViewModel
+                {
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName
+                });
+            }
+
             return View();
+
         }
 
         // POST: School/Create
@@ -65,37 +114,61 @@ namespace CMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(SchoolViewModel viewModel)
         {
+            var roles = viewModel.CurrentUserRole;
+            var clientId = viewModel.ClientId;
+            var clientName = viewModel.ClientName;
             if (ModelState.IsValid)
-             {
+            {
                 var school = new School
                 {
-                    CenterNumber = viewModel.CenterNumber,
-                    Name = viewModel.Name
+                    //Address = viewModel.Address,
+                    Name = viewModel.Name,
+                    ClientId = viewModel.ClientId,
+                    // UserId = viewModel.UserId
+
+
                 };
+
                 var result = _schoolService.Save(school);
                 if (result.Success)
                 {
-                    var roleUserId = User.Identity.GetUserId();
-                    var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
-                    var bodySubject = "Web portal changes - School Create";
-                    var message = "School Created Successfully";
-                    SendMailToAdmin(roles, roleUserId, message, viewModel.Name, bodySubject);
+
                     Success(result.Results.FirstOrDefault().Message);
                     ModelState.Clear();
-                    viewModel = new SchoolViewModel();
                 }
                 else
                 {
                     _logger.Warn(result.Results.FirstOrDefault().Message);
                     Warning(result.Results.FirstOrDefault().Message, true);
+                    ReturnViewModel(roles, viewModel, clientId, clientName);
                 }
             }
-
+            ReturnViewModel(roles, viewModel, clientId, clientName);
             viewModel = new SchoolViewModel();
 
             return View(viewModel);
         }
+        public void ReturnViewModel(string roles, SchoolViewModel viewModel, int clientId, string clientName)
+        {
+            if (roles == "Admin")
+            {
+                var clientList = (from b in _clientAdminService.GetClients()
+                                  select new SelectListItem
+                                  {
+                                      Value = b.ClientId.ToString(),
+                                      Text = b.Name
+                                  }).ToList();
+                viewModel.Clients = clientList;
+                ViewBag.ClientId = null;
+            }
+            else if (roles == "Client")
+            {
+                viewModel.ClientId = clientId;
+                viewModel.ClientName = clientName;
+            }
 
+            viewModel.CurrentUserRole = roles;
+        }
         // GET: School/Edit/5
         public ActionResult Edit(int id)
         {

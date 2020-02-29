@@ -26,5 +26,14 @@ namespace CMS.Domain.Models
         {
             Students = new HashSet<Student>();
         }
+
+        public int ClientId { get; set; }
+
+        [ForeignKey("ClientId")]
+        public virtual Client Client { get; set; }
+
+        public virtual ICollection<Client> Clients { get; set; }
+
+        public virtual Client ClientName { get; set; }
     }
 }

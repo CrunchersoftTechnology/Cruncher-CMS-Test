@@ -42,13 +42,21 @@
         }
 
        
-            <div class="form-group">
-                @Html.LabelFor(m => m.Classes, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClassId" })
-                <div class="col-md-3">
-                    @Html.DropDownListFor(model => model.ClassId, Model.Classes, "Select Class", new { @class = "form-control", @onchange = "FillClasses(this.value)" })
-                    @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Classes, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClassId" })
+            <span class="control-label glyphicon glyphicon-plus-sign" title="Click on this button to add new
+               class." id="tooltipClsName" onclick="@("window.location.href='" + @Url.Action("Create", "Class") + "'");"></span>
+            <div class="col-md-3">
+                @Html.DropDownListFor(model => model.ClassId, (SelectList)Model.Classes, new
+           {
+               @class = "form-control"
+               ,
+               @multiple = "multiple",
+               @onchange = "FillClasses(this.value)"
+           })
+                @Html.ValidationMessageFor(model => model.SelectedClasses, "", new { @class = "text-danger" })
             </div>
+       </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblName" })
@@ -84,6 +92,9 @@
             $('#Name').on('change', function () {
                 RequiredValidation('#Name', '#lblName')
             });
+
+           
+
             $('#ClassId').on('change', function () {
                 $("#ClassName").val($('#ClassId :selected').text());
                 RequiredValidation('#ClassId', '#lblClassId')
@@ -105,29 +116,7 @@
             $("#SelectedClasses").val(selectedClass);
         }
 
-        function FillSubjects(classId) {
-            if ($('#ClassId :selected').text() != "Select Class") {
-                $("#ClassName").val($('#ClassId :selected').text());
-                $.ajax({
-                    url: '/Subject/GetSubjects',
-                    type: "GET",
-                    dataType: "JSON",
-                    data: { classId: classId },
-                    success: function (subjects) {
-                        $("#SubjectId").html(""); // clear before appending new list
-                        $("#SubjectId").append($('<option></option>').val("").html("Select Subject"));
-                        $.each(subjects, function (i, sub) {
-                            $("#SubjectId").append(
-                                $('<option></option>').val(sub.SubjectId).html(sub.Name));
-                        });
-                        $("#SubjectId").val(@ViewBag.SubjectId);
-                    }
-                });
-            }
-            else {
-                $("#SubjectId").html("");
-            }
-        }
+        
     </script>
     @Scripts.Render("~/bundles/StudentJS")
     @Styles.Render("~/Content/StudentCSS")
