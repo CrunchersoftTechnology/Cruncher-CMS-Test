@@ -28,6 +28,8 @@ namespace CMS.Domain.Storage.Services
                             }).ToArray());
         }
 
+       
+
         public IEnumerable<ClassProjection> GetClassesByClientId(int ClientId)
         {
             return _repository.Project<Class, ClassProjection[]>(

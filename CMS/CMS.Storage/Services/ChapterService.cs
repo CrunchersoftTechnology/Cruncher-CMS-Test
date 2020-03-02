@@ -22,6 +22,7 @@ namespace CMS.Domain.Storage.Services
                 chapters => (from chapter in chapters
                              where chapter.SubjectId == subjectId
                              && chapter.Subject.ClassId == classId
+                            
                              select new ChapterProjection
                              {
                                  ChapterId = chapter.ChapterId,
@@ -47,16 +48,17 @@ namespace CMS.Domain.Storage.Services
                              }).ToArray());
         }
 
-        public CMSResult Save(Chapter newChapter)
+        public CMSResult Save(int ClientId,Chapter newChapter)
         {
             CMSResult result = new CMSResult();
-            var isExists = _repository.Project<Chapter, bool>(chapters => (from chap in chapters where chap.Name == newChapter.Name && chap.SubjectId == newChapter.SubjectId select chap).Any());
+            var isExists = _repository.Project<Chapter, bool>(chapters => (from chap in chapters where chap.Name == newChapter.Name && chap.SubjectId == newChapter.SubjectId && chap.ClientId==newChapter.ClientId select chap).Any());
             if (isExists)
             {
                 result.Results.Add(new Result { IsSuccessful = false, Message = string.Format("Chapter '{0}' already exists!", newChapter.Name) });
             }
             else
             {
+                newChapter.ClientId = ClientId;
                 _repository.Add(newChapter);
                 result.Results.Add(new Result { IsSuccessful = true, Message = string.Format("Chapter '{0}' successfully added!", newChapter.Name) });
             }
@@ -197,6 +199,78 @@ namespace CMS.Domain.Storage.Services
             if (filterSubjectName != 0)
             {
                 query = query.Where(p => p.SubjectId == filterSubjectName);
+            }
+            totalRecords = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                switch (orderBy)
+                {
+                    case nameof(ChapterGridModel.ChapterName):
+                        if (!desc)
+                            query = query.OrderBy(p => p.ChapterName);
+                        else
+                            query = query.OrderByDescending(p => p.ChapterName);
+                        break;
+                    case nameof(ChapterGridModel.ClassName):
+                        if (!desc)
+                            query = query.OrderBy(p => p.ClassName);
+                        else
+                            query = query.OrderByDescending(p => p.ClassName);
+                        break;
+                    case nameof(ChapterGridModel.SubjectName):
+                        if (!desc)
+                            query = query.OrderBy(p => p.SubjectName);
+                        else
+                            query = query.OrderByDescending(p => p.SubjectName);
+                        break;
+                    case nameof(ChapterGridModel.Weightage):
+                        if (!desc)
+                            query = query.OrderBy(p => p.Weightage);
+                        else
+                            query = query.OrderByDescending(p => p.Weightage);
+                        break;
+                    default:
+                        if (!desc)
+                            query = query.OrderBy(p => p.CreatedOn);
+                        else
+                            query = query.OrderByDescending(p => p.CreatedOn);
+                        break;
+                }
+            }
+            if (limitOffset.HasValue)
+            {
+                query = query.Skip(limitOffset.Value).Take(limitRowCount.Value);
+            }
+            return query.ToList();
+        }
+
+        public IEnumerable<ChapterGridModel> GetChapterDataByClientId(out int totalRecords, int filterClassName, int filterSubjectName, int ClientId,
+     int? limitOffset, int? limitRowCount, string orderBy, bool desc)
+        {
+            var query = _repository.Project<Chapter, IQueryable<ChapterGridModel>>(chapters => (
+                 from c in chapters
+                 where c.ClientId == ClientId
+                 select new ChapterGridModel
+                 {
+                     ChapterId = c.ChapterId,
+                     ChapterName = c.Name,
+                     ClassName = c.Subject.Class.Name,
+                     SubjectName = c.Subject.Name,
+                     SubjectId = c.SubjectId,
+                     Weightage = c.Weightage,
+                     ClassId = c.Subject.Class.ClassId,
+                     CreatedOn = c.CreatedOn,
+
+                 })).AsQueryable();
+
+            if (filterClassName != 0)
+            {
+                query = query.Where(p => p.ClassId == filterClassName && p.ClientId == ClientId);
+            }
+            if (filterSubjectName != 0)
+            {
+                query = query.Where(p => p.SubjectId == filterSubjectName && p.ClientId == ClientId);
             }
             totalRecords = query.Count();
 

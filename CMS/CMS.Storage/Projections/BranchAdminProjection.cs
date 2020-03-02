@@ -6,6 +6,8 @@
 
         public int BranchId { get; set; }
 
+        public int ClientId { get; set; }
+
         public string UserId { get; set; }
 
         public string Name { get; set; }

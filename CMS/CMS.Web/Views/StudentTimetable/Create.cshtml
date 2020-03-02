@@ -24,7 +24,7 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
        
-        @if (Model.CurrentUserRole == "Admin")
+        @if (Model.CurrentUserRole == "Admin" || Model.CurrentUserRole == "Client")
         {
             <div class="form-group">
                 @Html.LabelFor(m => m.Branches, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblBranch" })

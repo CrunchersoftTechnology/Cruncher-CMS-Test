@@ -26,6 +26,8 @@ namespace CMS.Common.GridModels
 
         public int BranchId { get; set; }
 
+        public int ClientId { get; set; }
+
         public int OfflineTestPaperId { get; set; }
 
         public DateTime CreatedOn { get; set; }

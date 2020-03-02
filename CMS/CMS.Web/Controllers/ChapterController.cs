@@ -29,8 +29,9 @@ namespace CMS.Web.Controllers
         readonly IEmailService _emailService;
         readonly IAspNetRoles _aspNetRolesService;
         readonly IBranchAdminService _branchAdminService;
+        readonly IClientAdminService _clientAdminService;
 
-        public ChapterController(ISubjectService subjectService, ILogger logger, IRepository repository, IChapterService chapterService, IClassService classService, IEmailService emailService, IAspNetRoles aspNetRolesService, IBranchAdminService branchAdminService)
+        public ChapterController(IClientAdminService clientAdminService,ISubjectService subjectService, ILogger logger, IRepository repository, IChapterService chapterService, IClassService classService, IEmailService emailService, IAspNetRoles aspNetRolesService, IBranchAdminService branchAdminService)
         {
             _subjectService = subjectService;
             _logger = logger;
@@ -40,11 +41,17 @@ namespace CMS.Web.Controllers
             _emailService = emailService;
             _aspNetRolesService = aspNetRolesService;
             _branchAdminService = branchAdminService;
+            _clientAdminService = clientAdminService;
+
         }
 
         // GET: Chapter
         public ActionResult Index(int? subjectId, int? classId)
         {
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
             ViewBag.ClassList = (from c in _classService.GetClasses()
                                  select new SelectListItem
                                  {
@@ -56,26 +63,63 @@ namespace CMS.Web.Controllers
             ViewBag.SubjectId = subjectId;
             var chapters = (classId == null && subjectId == null) ? _chapterService.GetAllChapters().ToList() : _chapterService.GetChapters((int)subjectId, (int)classId).ToList();
             var viewModelList = AutoMapper.Mapper.Map<List<ChapterProjection>, ChapterViewModel[]>(chapters);
+            if (roles == "Admin")
+            {
+                ViewBag.userId = 0;
+            }
+            else
+            {
+                ViewBag.userId = projection.ClientId;
+            }
+          
             return View(viewModelList);
         }
         public ActionResult Create()
         {
-            var classes = _classService.GetClasses().ToList();
-            var viewModel = new ChapterViewModel();
-            viewModel.Classes = new SelectList(classes, "ClassId", "Name");
-            return View(viewModel);
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
+           
+            if (roles == "Admin")
+            {
+                var classes = _classService.GetClasses().ToList();
+                var viewModel = new ChapterViewModel();
+                viewModel.Classes = new SelectList(classes, "ClassId", "Name");
+                return View(viewModel);
+            }
+            else if (roles == "Client")
+            {
+                var classes = _classService.GetClassesByClientId(Convert.ToInt32(projection.ClientId)).ToList();
+                var viewModel = new ChapterViewModel();
+                viewModel.Classes = new SelectList(classes, "ClassId", "Name");
+                return View(new ChapterViewModel
+                {
+                    Classes = viewModel.Classes,
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName
+                });
+            }
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ChapterViewModel viewModel)
         {
+            ViewBag.ClassId = viewModel.ClassId;
+            var classes = _classService.GetClasses().ToList();
+            var roles = viewModel.CurrentUserRole;
+            var clientId = viewModel.ClientId;
+            var clientName = viewModel.ClientName;
+
             if (ModelState.IsValid)
             {
                 var WeightageTotal = _chapterService.GetCountWeightage(viewModel.ClassId, viewModel.SubjectId);
                 ViewBag.Weightage = WeightageTotal.ToString();
                 var wChk = WeightageTotal + viewModel.Weightage;
-                var result = _chapterService.Save(new Chapter { Name = viewModel.Name, SubjectId = viewModel.SubjectId, Weightage = viewModel.Weightage });
+                var result = _chapterService.Save(clientId, new Chapter { Name = viewModel.Name, SubjectId = viewModel.SubjectId, Weightage = viewModel.Weightage });
                 if (result.Success)
                 {
                     if (wChk > 100)
@@ -100,7 +144,7 @@ namespace CMS.Web.Controllers
             ViewBag.SubjectId = viewModel.SubjectId;
             ViewBag.ClassId = viewModel.ClassId;
 
-            var classes = _classService.GetClasses().ToList();
+            //var classes = _classService.GetClasses().ToList();
             viewModel.Classes = new SelectList(classes, "ClassId", "Name");
             return View(viewModel);
         }

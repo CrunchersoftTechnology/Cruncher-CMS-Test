@@ -36,7 +36,33 @@
 <h2>Create Attendance</h2>
 
 @Html.AntiForgeryToken()
+@Html.HiddenFor(m => m.CurrentUserRole)
+@Html.HiddenFor(m => m.ClientName)
+@Html.HiddenFor(m => m.ClientId)
 <div class="form-horizontal">
+
+    @if (Model.CurrentUserRole == "Admin")
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Clients, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClientId" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ClientId, new SelectList(Model.Clients, "Value", "Text"),
+                    "Select Branch", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    else if (Model.CurrentUserRole == "Client")
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.ClientName, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClientName" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.ClientName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+                @Html.HiddenFor(m => m.ClientId)
+            </div>
+        </div>
+    }
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="alert alert-danger" id="dateAlert" style="display:none;">
@@ -53,13 +79,24 @@
             @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
         </div>
     </div>
-    @if (Model.CurrentUserRole == "Admin")
-    {
+    @if(Model.CurrentUserRole == "Admin")
+                {
         <div class="form-group">
             @Html.LabelFor(m => m.Branches, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblBranchId" })
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.BranchId, new SelectList(Model.Branches, "Value", "Text"),
                     "Select Branch", new { @class = "form-control", @onchange = "FillTeachers(this.value)" })
+                @Html.ValidationMessageFor(model => model.BranchId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    else if (Model.CurrentUserRole == "Client")
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Branches, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblBranchId" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.BranchId, new SelectList(Model.Branches, "Value", "Text"),
+                    "Select Branch", new { @class = "form-control", @onchange = "GetTeachersByClientId(this.value)" })
                 @Html.ValidationMessageFor(model => model.BranchId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -231,6 +268,11 @@
                 if(@ViewBag.BranchId != null || @ViewBag.BranchId != 0)
                     FillTeachers(@ViewBag.BranchId);
             }
+
+            if('@ViewBag.CurrentUserRole' == "Client"){
+                if(@ViewBag.ClientId != null || @ViewBag.ClientId != 0)
+                    FillTeachers(@ViewBag.ClientId);
+            }
         });
 
         function clearHtml() {
@@ -281,6 +323,33 @@
                 }
             });
         }
+
+        function GetTeachersByClientId(clientId) {
+            $.ajax({
+                url: '/Teacher/GetTeachersByClientId',
+                type: "GET",
+                dataType: "JSON",
+                data: { branchId: branchId },
+                async: false,
+                success: function (teachers) {
+                    $("#UserId").html(""); // clear before appending new list
+                    $("#UserId").append($('<option></option>').val("").html("Select Teacher"));
+                    $.each(teachers, function (i, ts) {
+                        var middelName;
+                        if(ts.MiddleName == null || ts.MiddleName == "")
+                            middelName = "";
+                        else
+                            middelName = ts.MiddleName;
+
+                        $("#UserId").append(
+                            $('<option></option>').val(ts.UserId).html(ts.FirstName + " " + middelName + " " + ts.LastName));
+                    });
+                }
+            });
+        }
+
+
+
 
 
         function FillBatches(classId) {

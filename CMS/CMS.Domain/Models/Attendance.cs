@@ -37,6 +37,13 @@ namespace CMS.Domain.Models
 
         public virtual ICollection<Branch> Branches { get; set; }
 
+        public int ClientId { get; set; }
+
+        [ForeignKey("ClientId")]
+        public virtual Client Client { get; set; }
+
+        public virtual ICollection<Client> Clients { get; set; }
+
         public bool IsManual { get; set; }
 
         public bool IsSend { get; set; }

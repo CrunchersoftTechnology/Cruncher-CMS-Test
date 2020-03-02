@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Common.GridModels
 {
@@ -22,5 +23,11 @@ namespace CMS.Common.GridModels
         public string Action { get; set; }
 
         public DateTime CreatedOn { get; set; }
+
+
+        public int ClientId { get; set; }
+
+        [Display(Name = "Client")]
+        public string ClientName { get; set; }
     }
 }

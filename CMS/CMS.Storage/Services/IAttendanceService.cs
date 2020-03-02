@@ -14,6 +14,7 @@ namespace CMS.Domain.Storage.Services
         AttendanceProjection GetAttendance(int attendanceId);
         IEnumerable<AttendanceProjection> GetAttendance();
         IEnumerable<AttendanceProjection> GetAttendanceByBranchId(int branchId);
+        IEnumerable<AttendanceProjection> GetAttendanceByClientId(int clientId);
         bool GetAttendanceExists(int classId, int batchId, DateTime date, int branchId);
         Attendance GetExistingAttendance(int classId, int batchId, DateTime date, int branchId);
         IEnumerable<AttendanceGridModel> GetAttendanceData(out int totalRecords, int filterClassName, int filterSubjectName, DateTime FilterDate, int userId,

@@ -39,8 +39,9 @@ namespace CMS.Web.Controllers
         readonly IEmailService _emailService;
         readonly ISmsService _smsService;
         readonly ISendNotificationService _sendNotificationService;
+        readonly IClientAdminService _clientAdminService;
 
-        public AttendanceController(IClassService classService, ILogger logger, IRepository repository,
+        public AttendanceController(IClientAdminService clientAdminService, IClassService classService, ILogger logger, IRepository repository,
             IBatchService batchService, IAttendanceService attendanceService, ITeacherService teacherService,
             IStudentService studentService, IBranchService branchService, IBranchAdminService branchAdminService,
             IAspNetRoles aspNetRolesService, IEmailService emailService, ISmsService smsService,
@@ -59,6 +60,7 @@ namespace CMS.Web.Controllers
             _emailService = emailService;
             _smsService = smsService;
             _sendNotificationService = sendNotificationService;
+            _clientAdminService = clientAdminService;
         }
 
         // GET: Attendance
@@ -67,7 +69,8 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "BranchAdmin" ? _branchAdminService.GetBranchAdminById(roleUserId) : null;
-            var attendanceList = roles == "Admin" ? _attendanceService.GetAttendance().ToList() : roles == "Client" ? _attendanceService.GetAttendance().ToList() : roles == "BranchAdmin" ? _attendanceService.GetAttendanceByBranchId(projection.BranchId).ToList() : null;
+            var projectionClient = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+            var attendanceList = roles == "Admin" ? _attendanceService.GetAttendance().ToList() : roles == "Client" ? _attendanceService.GetAttendanceByClientId(projectionClient.ClientId).ToList() : roles == "BranchAdmin" ? _attendanceService.GetAttendanceByBranchId(projection.BranchId).ToList() : null;
 
             var viewModel = AutoMapper.Mapper.Map<List<AttendanceProjection>, AttendanceViewModel[]>(attendanceList);
 
@@ -87,9 +90,13 @@ namespace CMS.Web.Controllers
                                      Value = c.ClassId.ToString(),
                                      Text = c.Name
                                  }).ToList();
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 ViewBag.userId = 0;
+            }
+            else if (roles == "Client")
+            {
+                ViewBag.userId = projectionClient.ClientId;
             }
             else
             {
@@ -104,7 +111,7 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
 
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = (from b in _branchService.GetAllBranches()
                                   select new SelectListItem
@@ -113,6 +120,7 @@ namespace CMS.Web.Controllers
                                       Text = b.Name
                                   }).ToList();
 
+
                 ViewBag.BranchId = 0;
                 ViewBag.CurrentUserRole = roles;
 
@@ -120,6 +128,29 @@ namespace CMS.Web.Controllers
                 {
                     Branches = branchList,
                     CurrentUserRole = roles
+                });
+            }
+            else if (roles == "Client")
+            {
+
+                var branchList = (from b in _branchService.GetAllBranches()
+                                  select new SelectListItem
+                                  {
+                                      Value = b.BranchId.ToString(),
+                                      Text = b.Name
+                                  }).ToList();
+
+                var projection = _clientAdminService.GetClientAdminById(roleUserId);
+
+                ViewBag.ClientId = projection.ClientId;
+                ViewBag.CurrentUserRole = roles;
+               ViewBag.BranchId = 0;
+                return View(new AttendanceViewModel
+                {
+                    Branches = branchList,
+                    CurrentUserRole = roles,
+                    ClientId = ViewBag.ClientId,
+                    ClientName = projection.ClientName
                 });
             }
             else if (roles == "BranchAdmin")
@@ -142,6 +173,9 @@ namespace CMS.Web.Controllers
         [HttpPost]
         public JsonResult SaveAttendance(AttendanceViewModel viewModel)
         {
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
             var cmsResult = new CMSResult();
             if (ModelState.IsValid)
             {
@@ -154,6 +188,7 @@ namespace CMS.Web.Controllers
                     UserId = viewModel.UserId,
                     StudentAttendence = viewModel.StudentAttendence,
                     BranchId = viewModel.BranchId,
+                    ClientId =projection.ClientId,
                     IsManual = true
                 });
                 if (cmsResult.Success)
@@ -383,7 +418,7 @@ namespace CMS.Web.Controllers
             {
                 var attendanceSIdList = attendance.StudentAttendence.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(int.Parse);
                 var studentList = _studentService.GetStudentsForSendAttendance(
-                                    attendance.ClassId, attendance.BranchId, attendance.BatchId, attendance.Date)
+                                    attendance.ClassId,attendance.ClientId, attendance.BranchId, attendance.BatchId, attendance.Date)
                                     .Where(x => x.DOJ.Date <= attendance.Date.Date);
 
                 foreach (var student in studentList)
@@ -392,6 +427,7 @@ namespace CMS.Web.Controllers
                     list.Add(new SendAttendanceClass
                     {
                         SId = student.SId,
+                       
                         Message = message,
                         StudentContact = student.StudentContact,
                         ParentContact = student.ParentContact,
@@ -483,6 +519,7 @@ namespace CMS.Web.Controllers
         public class SendAttendanceClass
         {
             public int SId { get; set; }
+
             public string Message { get; set; }
             public string StudentContact { get; set; }
             public string ParentContact { get; set; }
@@ -612,6 +649,28 @@ namespace CMS.Web.Controllers
                     Body = body,
                     Subject = bodySubject,
                     IsBranchAdmin = true
+                };
+                _emailService.Send(emailMessage);
+            }
+
+            if (roles == "Client")
+            {
+                var clientAdmin = _clientAdminService.GetClientAdminById(User.Identity.GetUserId());
+                var clientName = clientAdmin.ClientName;
+
+                string body = string.Empty;
+                using (StreamReader reader = new StreamReader(Server.MapPath("~/MailDesign/CommonMailDesign.html")))
+                {
+                    body = reader.ReadToEnd();
+                }
+                body = body.Replace("{ClientName}", clientName);
+                body = body.Replace("{ModuleName}", "Client Name :" + clientName + "<br/>" + message);
+                body = body.Replace("{ClientAdminEmail}", "( " + User.Identity.GetUserName() + " )");
+                var emailMessage = new MailModel
+                {
+                    Body = body,
+                    Subject = bodySubject,
+                    IsClientAdmin = true
                 };
                 _emailService.Send(emailMessage);
             }

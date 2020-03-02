@@ -8,15 +8,16 @@
 <h2>Create School</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
+   
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.CurrentUserRole)
     @Html.HiddenFor(m => m.ClientName)
 
-
     <div class="form-horizontal">
         <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @if (Model.CurrentUserRole == "Admin")
         {
@@ -40,7 +41,6 @@
                 </div>
             </div>
         }
-
 
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input" , @id= "lblName"})

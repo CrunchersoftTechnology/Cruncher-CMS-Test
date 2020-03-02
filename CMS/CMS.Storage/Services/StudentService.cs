@@ -294,11 +294,74 @@ namespace CMS.Domain.Storage.Services
                              }).ToArray());
         }
 
+        public IEnumerable<StudentProjection> GetStudentsByClientId(int clientId)
+        {
+            return _repository.Project<Student, StudentProjection[]>(
+                students => (from s in students
+                             where s.ClientId == clientId
+                             select new StudentProjection
+                             {
+                                 UserId = s.UserId,
+                                 BoardId = s.BoardId,
+                                 ClassId = s.ClassId,
+                                 FirstName = s.FirstName,
+                                 MiddleName = s.MiddleName,
+                                 LastName = s.LastName,
+                                 Gender = s.Gender,
+                                 StudentContact = s.StudentContact,
+                                 ParentContact = s.ParentContact,
+                                 SchoolId = s.SchoolId,
+                                 TotalFees = s.TotalFees,
+                                 Discount = s.Discount,
+                                 FinalFees = s.FinalFees,
+                                 ClassName = s.Class.Name,
+                                 BoardName = s.Board.Name,
+                                 Email = s.User.Email,
+                                 MotherName = s.MotherName,
+                                 VANArea = s.VANArea,
+                                 VANFee = s.VANFee,
+                                 SeatNumber = s.SeatNumber,
+                                 SchoolName = s.School.Name
+                             }).ToArray());
+        }
+
         public IEnumerable<StudentProjection> GetStudentsByBranchAndClassId(int classId, int branchId)
         {
             return _repository.Project<Student, StudentProjection[]>(
                 students => (from s in students
                              where s.ClassId == classId && s.BranchId == branchId
+                             select new StudentProjection
+                             {
+                                 UserId = s.UserId,
+                                 BoardId = s.BoardId,
+                                 ClassId = s.ClassId,
+                                 FirstName = s.FirstName,
+                                 MiddleName = s.MiddleName,
+                                 LastName = s.LastName,
+                                 Gender = s.Gender,
+                                 StudentContact = s.StudentContact,
+                                 ParentContact = s.ParentContact,
+                                 SchoolId = s.SchoolId,
+                                 TotalFees = s.TotalFees,
+                                 Discount = s.Discount,
+                                 FinalFees = s.FinalFees,
+                                 ClassName = s.Class.Name,
+                                 BoardName = s.Board.Name,
+                                 Email = s.User.Email,
+                                 MotherName = s.MotherName,
+                                 VANArea = s.VANArea,
+                                 VANFee = s.VANFee,
+                                 SeatNumber = s.SeatNumber,
+                                 SchoolName = s.School.Name,
+                                 DOB = s.DOB
+                             }).ToArray());
+        }
+
+        public IEnumerable<StudentProjection> GetStudentsByClientAndClassId(int classId, int clientId)
+        {
+            return _repository.Project<Student, StudentProjection[]>(
+                students => (from s in students
+                             where s.ClassId == classId && s.ClientId == clientId
                              select new StudentProjection
                              {
                                  UserId = s.UserId,
@@ -587,11 +650,12 @@ namespace CMS.Domain.Storage.Services
                              }).ToArray());
         }
 
-        public IEnumerable<StudentProjection> GetStudentsForSendAttendance(int classId, int branchId, int batchId, DateTime date)
+        public IEnumerable<StudentProjection> GetStudentsForSendAttendance(int classId, int ClientId,int branchId, int batchId, DateTime date)
         {
             return _repository.Project<Student, StudentProjection[]>(
                 students => (from s in students
                              where s.ClassId == classId
+                             && s.ClientId==ClientId
                              && s.BranchId == branchId
                              && s.IsActive
                              && s.BatchId == batchId

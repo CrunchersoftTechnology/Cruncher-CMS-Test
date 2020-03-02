@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <h2>Master Fee List</h2>
-@if (ViewBag.userRole == "Admin")
+@if (ViewBag.userRole == "Admin" || ViewBag.userRole == "Client")
 {
     <div>
         @Html.ActionLink("Create New Master Fee", "Create")

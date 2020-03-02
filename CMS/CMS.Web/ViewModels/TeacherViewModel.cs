@@ -60,6 +60,16 @@ namespace CMS.Web.ViewModels
         [Display(Name = "Branch")]
         public IEnumerable<SelectListItem> Branches { get; set; }
 
+        [Display(Name = "Client Name")]
+        public string ClientName { get; set; }
+
+        [Required(ErrorMessage = "The Branch field is required.")]
+        public int ClientId { get; set; }
+
+        [Display(Name = "Client")]
+        public IEnumerable<SelectListItem> Clients { get; set; }
+
+
         public string CurrentUserRole { get; set; }
 
         [Display(Name = "Active Status")]

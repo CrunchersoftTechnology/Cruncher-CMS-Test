@@ -25,7 +25,6 @@ namespace CMS.Web.Controllers
         readonly IAspNetRoles _aspNetRolesService;
         readonly IClientAdminService _clientAdminService;
 
-
         public BatchController(IClientAdminService clientAdminService,IClassService classService, ILogger logger, IRepository repository, IBatchService batchService, ISubjectService subjectService,
             IStudentService studentService, IAspNetRoles aspNetRolesService)
         {
@@ -40,9 +39,11 @@ namespace CMS.Web.Controllers
         }
 
         // GET: Batch
-        public ActionResult Index(int? id)
+        public ActionResult Index(int? classId)
         {
-           
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
 
             ViewBag.ClassList = (from c in _classService.GetClasses()
                                  select new SelectListItem
@@ -51,21 +52,10 @@ namespace CMS.Web.Controllers
                                      Text = c.Name
                                  }).ToList();
 
-            ViewBag.ClassId = id;
-
-           
-
-            var batches = id == null ? _batchService.GetAllBatches().ToList() : _batchService.GetBatches((int)id).ToList();
+            ViewBag.ClassId = classId;
+            var batches = (classId == null) ? _batchService.GetAllBatches().ToList() : _batchService.GetBatches((int)classId).ToList();
             var viewModelList = AutoMapper.Mapper.Map<List<BatchProjection>, BatchViewModel[]>(batches);
-
-            var roleUserId = User.Identity.GetUserId();
-            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
-            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
             ViewBag.userRole = roles;
-            //return View(viewModelList);
-
-
-
 
             if (roles == "Admin")
             {
@@ -75,10 +65,12 @@ namespace CMS.Web.Controllers
             {
                 ViewBag.userId = projection.ClientId;
             }
+
+
             return View(viewModelList);
         }
 
-        public ActionResult Create(int? clientId)
+        public ActionResult Create()
         {
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
@@ -96,11 +88,20 @@ namespace CMS.Web.Controllers
                 var classes = _classService.GetClassesByClientId(Convert.ToInt32(projection.ClientId)).ToList();
                 var viewModel = new BatchViewModel();
                 viewModel.Classes = new SelectList(classes, "ClassId", "Name");
-                return View(viewModel);
+                return View(new BatchViewModel
+                {
+                    Classes = viewModel.Classes,
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName
+                });
+                //return View(viewModel);
             }
+
             return View();
-               
-            }
+
+
+        }
 
         [HttpPost]
         public ActionResult Create(BatchViewModel viewModel)
@@ -124,7 +125,7 @@ namespace CMS.Web.Controllers
                         return View(viewModel);
                     }
                 }
-                var result = _batchService.Save(new Batch { Name = viewModel.Name, ClassId = viewModel.ClassId, InTime = (viewModel.InTime == null ? DateTime.Now.Date : Convert.ToDateTime(viewModel.InTime.Trim())), OutTime = (viewModel.OutTime == null ? DateTime.Now.Date : Convert.ToDateTime(viewModel.OutTime.Trim()))}, clientId);
+                var result = _batchService.Save(clientId, new Batch { Name = viewModel.Name, ClassId = viewModel.ClassId, InTime = (viewModel.InTime == null ? DateTime.Now.Date : Convert.ToDateTime(viewModel.InTime.Trim())), OutTime = (viewModel.OutTime == null ? DateTime.Now.Date : Convert.ToDateTime(viewModel.OutTime.Trim())) });
 
                 // var dt = new DateTime(2017, 12, 23, 05, 36, 50).ToUniversalTime();
                 if (result.Success)
@@ -143,42 +144,6 @@ namespace CMS.Web.Controllers
             viewModel.Classes = new SelectList(classes, "ClassId", "Name");
             return View(viewModel);
         }
-
-        /* ViewBag.ClassId = viewModel.ClassId;
-         var classes = _classService.GetClasses().ToList();
-
-         if (ModelState.IsValid)
-         {
-             if (viewModel.InTime != null && viewModel.OutTime != null)
-             {
-                 TimeSpan span = (Convert.ToDateTime(viewModel.OutTime) - Convert.ToDateTime(viewModel.InTime));
-                 if (span < TimeSpan.FromHours(1) || span > TimeSpan.FromHours(6))
-                 {
-                     _logger.Warn(string.Format("The time limit should be min lengh of (1hr) & max length of  (6hrs)"));
-                     Danger(string.Format("The time limit should be min lengh of (1hr) & max length of  (6hrs)"));
-                     viewModel.Classes = new SelectList(classes, "ClassId", "Name");
-                     return View(viewModel);
-                 }
-             }
-             var result = _batchService.Save(new Batch { Name = viewModel.Name, ClassId = viewModel.ClassId, InTime = (viewModel.InTime == null ? DateTime.Now.Date : Convert.ToDateTime(viewModel.InTime.Trim())), OutTime = (viewModel.OutTime == null ? DateTime.Now.Date : Convert.ToDateTime(viewModel.OutTime.Trim())) });
-
-             // var dt = new DateTime(2017, 12, 23, 05, 36, 50).ToUniversalTime();
-             if (result.Success)
-             {
-                 ViewBag.ClassId = 0;
-                 Success(result.Results.FirstOrDefault().Message);
-                 ModelState.Clear();
-                 viewModel = new BatchViewModel();
-             }
-             else
-             {
-                 _logger.Warn(result.Results.FirstOrDefault().Message);
-                 Warning(result.Results.FirstOrDefault().Message, true);
-             }
-         }
-         viewModel.Classes = new SelectList(classes, "ClassId", "Name");
-         return View(viewModel);
-     }*/
 
         [Authorize(Roles = Common.Constants.AdminRole + "," + Common.Constants.ClientAdminRole)]
         public ActionResult Edit(int id)

@@ -26,6 +26,11 @@ namespace CMS.Domain.Storage.Projections
         [Required]
         public int? BranchId { get; set; }
 
+
+        [Display(Name = "Client")]
+        [Required]
+        public int? ClientId { get; set; }
+
         [Display(Name = "Class")]
         public int? ClassId { get; set; }
 
@@ -34,6 +39,9 @@ namespace CMS.Domain.Storage.Projections
 
         [Display(Name = "Branch")]
         public IEnumerable<SelectListItem> Branches { get; set; }
+
+        [Display(Name = "Client")]
+        public IEnumerable<SelectListItem> Clients { get; set; }
 
         [Display(Name = "Class")]
         public IEnumerable<SelectListItem> Classes { get; set; }
@@ -63,6 +71,8 @@ namespace CMS.Domain.Storage.Projections
         public string CurrentUserRole { get; set; }
 
         public string BranchName { get; set; }
+
+        public string ClientName { get; set; }
 
         [DataType(DataType.MultilineText)]
         [MinLength(2, ErrorMessage = "The Description must be a minimum length of '2' and maximum length of '500'.")]

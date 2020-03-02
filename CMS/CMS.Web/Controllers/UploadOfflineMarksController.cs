@@ -37,8 +37,9 @@ namespace CMS.Web.Controllers
         readonly IOfflineTestPaper _offlineTestPaper;
         readonly IOfflineTestStudentMarksService _offlineTestStudentMarksService;
         readonly ISendNotificationService _sendNotificationService;
+        readonly IClientAdminService _clientAdminService;
 
-        public UploadOfflineMarksController(IBranchService branchService, IClassService classService, IBatchService batchService,
+        public UploadOfflineMarksController(IClientAdminService clientAdminService, IBranchService branchService, IClassService classService, IBatchService batchService,
                 IEmailService emailService, IAspNetRoles aspNetRolesService,
                 IBranchAdminService branchAdminService, IStudentService studentService,
                 ISubjectService subjectService, IRepository repository, ILogger logger,
@@ -60,15 +61,22 @@ namespace CMS.Web.Controllers
             _offlineTestPaper = offlineTestPaper;
             _offlineTestStudentMarksService = offlineTestStudentMarks;
             _sendNotificationService = sendNotificationService;
+            _clientAdminService = clientAdminService;
         }
         // GET: UploadMarks
         public ActionResult Index()
         {
             var roles = _aspNetRolesService.GetCurrentUserRole(User.Identity.GetUserId());
             var projection = roles == "BranchAdmin" ? _branchAdminService.GetBranchAdminById(User.Identity.GetUserId()) : null;
-            if (roles == "Admin" || roles=="Client")
+            var projectionClient = roles == "Client" ? _clientAdminService.GetClientAdminById(User.Identity.GetUserId()) : null;
+            if (roles == "Admin")
             {
                 ViewBag.userId = 0;
+            }
+            else if (roles == "Client")
+            {
+                ViewBag.userId = projectionClient.ClientId;
+
             }
             else
             {
@@ -81,7 +89,7 @@ namespace CMS.Web.Controllers
         {
             var roles = _aspNetRolesService.GetCurrentUserRole(User.Identity.GetUserId());
             var papers = _offlineTestPaper.GetOfflineTestPaper().ToList();
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var selectedBranch = papers.Select(x => x.SelectedBranches).ToList();
                 var branchCommaSepratedList = string.Join(",", selectedBranch).Split(',').Select(x => int.Parse(x)).ToList().Distinct();
@@ -102,6 +110,50 @@ namespace CMS.Web.Controllers
                     Branches = branchList,
                     CurrentUserRole = roles,
                     Papers = new SelectList(papers, "OfflineTestPaperId", "Title")
+                });
+            }
+            else if (roles == "Client")
+            {
+                var projection = _clientAdminService.GetClientAdminById(User.Identity.GetUserId());
+                ViewBag.ClientId = projection.ClientId;
+
+                var selectedBranch = papers.Select(x => x.SelectedBranches).ToList();
+                var branchCommaSepratedList = string.Join(",", selectedBranch).Split(',').Select(x => int.Parse(x)).ToList().Distinct();
+                var branchLists = _branchService.GetAllBranches().Where(x => branchCommaSepratedList.Contains(x.BranchId));
+
+                var branchList = (from b in branchLists
+                                  select new SelectListItem
+                                  {
+                                      Value = b.BranchId.ToString(),
+                                      Text = b.Name
+                                  }).ToList();
+
+                var classList = (from c in _studentService.GetStudentsByClientId(projection.ClientId)
+                                 select new SelectListItem
+                                 {
+                                     Value = c.ClassId.ToString(),
+                                     Text = c.ClassName
+                                 }).ToList();
+
+                ViewBag.BranchId = 0;
+                ViewBag.CurrentUserRole = roles;
+
+             
+                var examScedule = _clientAdminService.GetClientAdminById(User.Identity.GetUserId());
+                papers = _offlineTestPaper.GetOfflineTestPaper().ToList().Where(y => (y.SelectedBranches.Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(int.Parse)).Contains(examScedule.ClientId)).ToList();
+
+                return View(new UploadOfflineMarksViewModel
+                {
+                    Branches = branchList,
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName,
+                    Classes = classList,
+                    SelectedBranches = projection.ClientId.ToString(),
+                    Papers = new SelectList(papers, "OfflineTestPaperId", "Title"),
+                    Clients = branchList
+                    
+                   
                 });
             }
             else if (roles == "BranchAdmin")

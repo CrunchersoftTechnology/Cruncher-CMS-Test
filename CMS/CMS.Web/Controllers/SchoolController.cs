@@ -30,8 +30,7 @@ namespace CMS.Web.Controllers
         readonly IBranchAdminService _branchAdminService;
         readonly IClientAdminService _clientAdminService;
 
-
-        public SchoolController(IClientAdminService clientAdminService, ISchoolService schoolService, ILogger logger, IRepository repository, IAspNetRoles aspNetRolesService, IEmailService emailService, IBranchAdminService branchAdminService)
+        public SchoolController(IClientAdminService clientAdminService,ISchoolService schoolService, ILogger logger, IRepository repository, IAspNetRoles aspNetRolesService, IEmailService emailService, IBranchAdminService branchAdminService)
         {
             _schoolService = schoolService;
             _logger = logger;
@@ -40,7 +39,7 @@ namespace CMS.Web.Controllers
             _emailService = emailService;
             _branchAdminService = branchAdminService;
             _clientAdminService = clientAdminService;
-            
+
         }
 
         // GET: School
@@ -49,6 +48,7 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
 
             if (roles == "Admin")
             {
@@ -70,7 +70,6 @@ namespace CMS.Web.Controllers
         // GET: School/Create
         public ActionResult Create(int? ClientId)
         {
-
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
 
@@ -106,7 +105,6 @@ namespace CMS.Web.Controllers
             }
 
             return View();
-
         }
 
         // POST: School/Create
@@ -114,6 +112,7 @@ namespace CMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(SchoolViewModel viewModel)
         {
+
             var roles = viewModel.CurrentUserRole;
             var clientId = viewModel.ClientId;
             var clientName = viewModel.ClientName;
@@ -121,8 +120,9 @@ namespace CMS.Web.Controllers
             {
                 var school = new School
                 {
-                    //Address = viewModel.Address,
+               
                     Name = viewModel.Name,
+                    CenterNumber=viewModel.CenterNumber,
                     ClientId = viewModel.ClientId,
                     // UserId = viewModel.UserId
 
@@ -169,8 +169,11 @@ namespace CMS.Web.Controllers
 
             viewModel.CurrentUserRole = roles;
         }
-        // GET: School/Edit/5
-        public ActionResult Edit(int id)
+
+
+
+    // GET: School/Edit/5
+    public ActionResult Edit(int id)
         {
             var projection = _schoolService.GetSchoolById(id);
             if (projection == null)

@@ -6,7 +6,7 @@
 }
 <h2>Batch List</h2>
 <div class="form-horizontal">
-    @if (ViewBag.userRole == "Admin" || ViewBag.userRole == "Client")
+    @if (ViewBag.userRole == "Admin" || ViewBag.userRole=="Client")
     {
         <div>
             @Html.ActionLink("Create New Batch", "Create")

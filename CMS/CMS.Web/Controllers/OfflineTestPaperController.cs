@@ -34,8 +34,9 @@ namespace CMS.Web.Controllers
         readonly ISmsService _smsService;
         readonly IOfflineTestPaper _offlineTestPaper;
         readonly ISendNotificationService _sendNotificationService;
+        readonly IClientAdminService _clientAdminService;
 
-        public OfflineTestPaperController(IBranchService branchService, IClassService classService, IBatchService batchService,
+        public OfflineTestPaperController(IClientAdminService clientAdminService, IBranchService branchService, IClassService classService, IBatchService batchService,
                 IEmailService emailService, IAspNetRoles aspNetRolesService,
                 IBranchAdminService branchAdminService, IStudentService studentService,
                 ISubjectService subjectService, IRepository repository, ILogger logger,
@@ -55,15 +56,21 @@ namespace CMS.Web.Controllers
             _smsService = smsService;
             _offlineTestPaper = offlineTestPaper;
             _sendNotificationService = sendNotificationService;
+            _clientAdminService = clientAdminService;
         }
         // GET: OfflineTestPaper
         public ActionResult Index()
         {
             var roles = _aspNetRolesService.GetCurrentUserRole(User.Identity.GetUserId());
             var projection = roles == "BranchAdmin" ? _branchAdminService.GetBranchAdminById(User.Identity.GetUserId()) : null;
-            if (roles == "Admin" || roles=="Client")
+            var projectionClient = roles == "Client" ? _clientAdminService.GetClientAdminById(User.Identity.GetUserId()) : null;
+            if (roles == "Admin")
             {
                 ViewBag.userId = 0;
+            }
+            else if (roles == "Client")
+            {
+                ViewBag.userId = projectionClient.ClientId;
             }
             else
             {
@@ -76,8 +83,27 @@ namespace CMS.Web.Controllers
         {
             var roles = _aspNetRolesService.GetCurrentUserRole(User.Identity.GetUserId());
 
-            if (roles == "Admin" || roles=="Admin")
+            if (roles == "Admin")
             {
+                var branchList = (from b in _branchService.GetAllBranches()
+                                  select new SelectListItem
+                                  {
+                                      Value = b.BranchId.ToString(),
+                                      Text = b.Name
+                                  }).ToList();
+
+                ViewBag.BranchId = 0;
+                ViewBag.CurrentUserRole = roles;
+
+                return View(new OfflineTestPaperViewModel
+                {
+                    Branches = branchList.Distinct(),
+                    CurrentUserRole = roles
+                });
+            }
+            else if (roles == "Client")
+            {
+
                 var branchList = (from b in _branchService.GetAllBranches()
                                   select new SelectListItem
                                   {

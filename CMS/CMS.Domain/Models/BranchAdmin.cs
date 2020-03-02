@@ -25,6 +25,8 @@ namespace CMS.Domain.Models
 
         public virtual ICollection<Branch> Branches { get; set; }
 
+
+
         public bool Active { get; set; }
 
         public string ContactNo { get; set; }

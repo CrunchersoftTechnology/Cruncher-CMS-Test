@@ -48,8 +48,9 @@ namespace CMS.Web.Controllers
         readonly IApiService _apiService;
         readonly ILocalDateTimeService _localDateTimeService;
         readonly ISmsService _smsService;
+        readonly IClientAdminService _clientAdminService;
 
-        public StudentController(IClassService classService, ILogger logger, IRepository repository,
+        public StudentController(IClientAdminService clientAdminService, IClassService classService, ILogger logger, IRepository repository,
             IBoardService boardService, IStudentService studentService,
             IApplicationUserService applicationUserService, ISubjectService subjectService,
             IInstallmentService installmentService, IBatchService batchService, IEmailService emailService,
@@ -75,15 +76,22 @@ namespace CMS.Web.Controllers
             _apiService = apiService;
             _localDateTimeService = localDateTimeService;
             _smsService = smsService;
+            _clientAdminService = clientAdminService;
         }
 
 
-        [Roles(Common.Constants.AdminRole, Common.Constants.BranchAdminRole)]
+        [Roles(Common.Constants.AdminRole, Common.Constants.BranchAdminRole, Common.Constants.ClientAdminRole)]
         public ActionResult Index(int? id)
         {
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "BranchAdmin" ? _branchAdminService.GetBranchAdminById(roleUserId) : null;
+            var projectionClient = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+            //var projection2 = roles == "Client" ? _branchAdminService.GetBranchAdminById(roleUserId) : null;
+            //var projection = projection1 != null ? projection1 : projection2 != null ? projection2 : null;
+
+
+
             ViewBag.ClassList = (from c in _classService.GetClasses()
                                  select new SelectListItem
                                  {
@@ -91,19 +99,23 @@ namespace CMS.Web.Controllers
                                      Text = c.Name
                                  }).ToList();
 
-            /*ViewBag.ClassId = id;
+            ViewBag.ClassId = id;
            var students = (roles == "Admin" && id == null) ? _studentService.GetAllStudents().ToList()
                                 : (roles == "Admin" && id != null) ? _studentService.GetStudentsByClassId((int)id).ToList()
-                                :(roles == "Client" && id == null) ? _studentService.GetAllStudents().ToList()
-                                : (roles == "Client" && id != null) ? _studentService.GetStudentsByClassId((int)id).ToList()
+                                : (roles == "Client" && id == null) ? _studentService.GetStudentsByClientId(projectionClient.ClientId).ToList()
+                                  : (roles == "Client" && id != null) ? _studentService.GetStudentsByClientAndClassId((int)id, projectionClient.ClientId).ToList()
                                     : (roles == "BranchAdmin" && id == null) ? _studentService.GetStudentsByBranchId(projection.BranchId).ToList()
                                   : (roles == "BranchAdmin" && id != null) ? _studentService.GetStudentsByBranchAndClassId((int)id, projection.BranchId).ToList() : null;
 
             var viewModelList = AutoMapper.Mapper.Map<List<StudentProjection>, StudentViewModel[]>(students);
-            // return View(viewModelList);*/
-            if (roles == "Admin" || roles=="Client")
+            // return View(viewModelList);
+            if (roles == "Admin")
             {
                 ViewBag.userId = 0;
+            }
+            else if (roles == "Client")
+            {
+                ViewBag.userId = projectionClient.ClientId;
             }
             else
             {
@@ -112,41 +124,46 @@ namespace CMS.Web.Controllers
             return View();
         }
 
-        [Authorize(Roles = Common.Constants.AdminRole + "," + Common.Constants.BranchAdminRole)]
+        [Authorize(Roles = Common.Constants.AdminRole + "," + Common.Constants.BranchAdminRole + "," + Common.Constants.ClientAdminRole)]
         public ActionResult Create(int? id)
         {
-            var boardList = (from c in _boardService.GetBoards()
+
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
+            var branchList= (from c in _branchService.GetAllBranchesByClientId(Convert.ToInt32(projection.ClientId))
+                             select new SelectListItem
+                             {
+                                 Value = c.BranchId.ToString(),
+                                 Text = c.Name
+                             }).ToList();
+
+            var boardList = (from c in _boardService.GetBoardsByClientId(Convert.ToInt32(projection.ClientId))
                              select new SelectListItem
                              {
                                  Value = c.BoardId.ToString(),
                                  Text = c.Name
                              }).ToList();
 
-            var classList = (from c in _classService.GetClasses()
+            var classList = (from c in _classService.GetClassesByClientId(Convert.ToInt32(projection.ClientId))
                              select new SelectListItem
                              {
                                  Value = c.ClassId.ToString(),
                                  Text = c.Name
                              }).ToList();
 
-            var schoolList = (from s in _schoolService.GetAllSchools()
+            var schoolList = (from s in _schoolService.GetAllSchoolsByClientId(Convert.ToInt32(projection.ClientId))
                               select new SelectListItem
                               {
                                   Value = s.SchoolId.ToString(),
                                   Text = s.Name
                               }).ToList();
 
-            var roleUserId = User.Identity.GetUserId();
-            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
-
-            if (roles == "Admin" || roles=="Client")
+           
+            if (roles == "Admin")
             {
-                var branchList = (from b in _branchService.GetAllBranches()
-                                  select new SelectListItem
-                                  {
-                                      Value = b.BranchId.ToString(),
-                                      Text = b.Name
-                                  }).ToList();
+               
                 if (id != null)
                 {
                     var admissionResult = _apiService.GetAdmission(id);
@@ -173,6 +190,7 @@ namespace CMS.Web.Controllers
                         ViewBag.BatchId = admission.BatchId;
                         return View(new StudentViewModel
                         {
+                            ClientId= Convert.ToInt32(projection.ClientId),
                             Branches = branchList,
                             CurrentUserRole = roles,
                             Boards = boardList,
@@ -221,16 +239,34 @@ namespace CMS.Web.Controllers
                     });
                 }
             }
-            else if (roles == "BranchAdmin")
+            else if (roles == "Client")
             {
-                var projection = _branchAdminService.GetBranchAdminById(roleUserId);
-                ViewBag.BranchId = projection.BranchId;
+
+               // var projection = _clientAdminService.GetClientAdminById(roleUserId);
+                ViewBag.ClientId = projection.ClientId;
 
                 return View(new StudentViewModel
                 {
                     CurrentUserRole = roles,
-                    BranchId = projection.BranchId,
-                    BranchName = projection.BranchName,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName,
+                    Branches = branchList,
+                    Boards = boardList,
+                    Classes = classList,
+                    Schools = schoolList,
+                
+                });
+            }
+            else if (roles == "BranchAdmin")
+            {
+                var projectionBranch = _branchAdminService.GetBranchAdminById(roleUserId);
+                ViewBag.BranchId = projectionBranch.BranchId;
+
+                return View(new StudentViewModel
+                {
+                    CurrentUserRole = roles,
+                    BranchId = projectionBranch.BranchId,
+                    BranchName = projectionBranch.BranchName,
                     Boards = boardList,
                     Classes = classList,
                     Schools = schoolList,
@@ -247,9 +283,27 @@ namespace CMS.Web.Controllers
         {
             try
             {
-                var roles = viewModel.CurrentUserRole;
+
+                var roleUserId = User.Identity.GetUserId();
+                var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+                var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
+                //var roles = viewModel.CurrentUserRole;
                 var branchId = viewModel.BranchId;
                 var branchName = viewModel.BranchName;
+                var clientId = projection.ClientId;
+                var clientName = projection.ClientName;
+
+
+
+                var branchList = (from b in _branchService.GetAllBranches()
+                                 select new SelectListItem
+                                 {
+                                     Value = b.BranchId.ToString(),
+                                     Text = b.Name
+                                 }).ToList();
+
+
                 var boardList = (from b in _boardService.GetBoards()
                                  select new SelectListItem
                                  {
@@ -270,7 +324,7 @@ namespace CMS.Web.Controllers
                                       Value = s.SchoolId.ToString(),
                                       Text = s.Name
                                   }).ToList();
-
+              
                 if (ModelState.IsValid)
                 {
                     if (viewModel.PaidFee != 0)
@@ -285,7 +339,7 @@ namespace CMS.Web.Controllers
                             {
                                 ViewBag.BatchId = viewModel.BatchId;
                                 ViewBag.SelectedSubjects = viewModel.SelectedSubject;
-                                ReturnViewModel(roles, viewModel, branchId, branchName, boardList, schoolList, classList);
+                                ReturnViewModel(roles, viewModel, clientId,clientName, branchId, branchName, boardList, schoolList, classList);
                                 return View(viewModel);
                             }
                         }
@@ -298,7 +352,7 @@ namespace CMS.Web.Controllers
                             {
                                 ViewBag.BatchId = viewModel.BatchId;
                                 ViewBag.SelectedSubjects = viewModel.SelectedSubject;
-                                ReturnViewModel(roles, viewModel, branchId, branchName, boardList, schoolList, classList);
+                                ReturnViewModel(roles, viewModel, clientId, clientName, branchId, branchName, boardList, schoolList, classList);
                                 return View(viewModel);
                             }
                         }
@@ -310,7 +364,7 @@ namespace CMS.Web.Controllers
                         Warning(viewModel.PaymentErrorMessage, true);
                         ViewBag.SelectedSubjects = viewModel.SelectedSubject;
                         ViewBag.BatchId = viewModel.BatchId;
-                        ReturnViewModel(roles, viewModel, branchId, branchName, boardList, schoolList, classList);
+                        ReturnViewModel(roles, viewModel,clientId, clientName, branchId, branchName, boardList, schoolList, classList);
                     }
 
                     else
@@ -347,6 +401,7 @@ namespace CMS.Web.Controllers
                             user.PhoneNumber = viewModel.StudentContact == null ? "" : viewModel.StudentContact.Trim();
                             user.Student = new Student
                             {
+                                ClientId= viewModel.ClientId,
                                 CreatedBy = User.Identity.Name,
                                 CreatedOn = localTime,
                                 BoardId = viewModel.BoardId,
@@ -416,7 +471,7 @@ namespace CMS.Web.Controllers
                                 }
                                 if (viewModel.StudentContact != null)
                                 {
-                                    SendSMS(viewModel);
+                                    //SendSMS(viewModel);
                                 }
                                 SendEmail(viewModel, userPassword, filename);
                             }
@@ -470,16 +525,7 @@ namespace CMS.Web.Controllers
                                     Warning(messages, true);
                                 }
                             }
-                            //else
-                            //{
-                            //    var messages = "";
-                            //    foreach (var message in result.Results)
-                            //    {
-                            //        messages += message.Message + "<br />";
-                            //    }
-                            //    _logger.Warn(messages);
-                            //    Warning(messages, true);
-                            //}
+                            
                         }
                         else
                         {
@@ -490,7 +536,9 @@ namespace CMS.Web.Controllers
                 }
                 ViewBag.SelectedSubjects = viewModel.SelectedSubject;
                 ViewBag.BatchId = viewModel.BatchId;
-                ReturnViewModel(roles, viewModel, branchId, branchName, boardList, schoolList, classList);
+                ViewBag.CurrentUserRole = roles;
+                
+                ReturnViewModel(roles, viewModel, clientId, clientName, branchId, branchName, boardList, schoolList, classList);
                 // viewModel.BatchId = ViewBag.BatchId;
                 return View(viewModel);
             }
@@ -501,10 +549,10 @@ namespace CMS.Web.Controllers
             }
         }
 
-        public void ReturnViewModel(string roles, StudentViewModel viewModel, int branchId, string branchName, List<SelectListItem> boardList,
+        public void ReturnViewModel(string roles, StudentViewModel viewModel,int ClientId, string ClientName, int branchId, string branchName, List<SelectListItem> boardList,
                 List<SelectListItem> schoolList, List<SelectListItem> classList)
         {
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = (from b in _branchService.GetAllBranches()
                                   select new SelectListItem
@@ -515,6 +563,11 @@ namespace CMS.Web.Controllers
 
                 viewModel.Branches = branchList;
                 ViewBag.BranchId = null;
+            }
+            else if (roles == "Client")
+            {
+                viewModel.BranchId = branchId;
+                viewModel.BranchName = branchName;
             }
             else if (roles == "BranchAdmin")
             {

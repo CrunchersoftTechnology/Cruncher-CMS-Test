@@ -31,8 +31,9 @@ namespace CMS.Web.Controllers
         readonly IBranchAdminService _branchAdminService;
         readonly IAspNetRoles _aspNetRolesService;
         readonly ILocalDateTimeService _localDateTimeService;
+        readonly IClientAdminService _clientAdminService;
 
-        public TeacherController(ILogger logger, IRepository repository,
+        public TeacherController(IClientAdminService clientAdminService, ILogger logger, IRepository repository,
             IApplicationUserService applicationUserService, ITeacherService teacherService,
             IEmailService emailService, IBranchService branchService,
             IBranchAdminService branchAdminService, IAspNetRoles aspNetRolesService,
@@ -47,6 +48,7 @@ namespace CMS.Web.Controllers
             _branchAdminService = branchAdminService;
             _aspNetRolesService = aspNetRolesService;
             _localDateTimeService = localDateTimeService;
+            _clientAdminService = clientAdminService;
         }
         // GET: Teacher
         public ActionResult Index()
@@ -54,11 +56,17 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "BranchAdmin" ? _branchAdminService.GetBranchAdminById(roleUserId) : null;
-            var teachers = roles == "Admin" ? _teacherService.GetTeachers().ToList() : roles == "BranchAdmin" ? _teacherService.GetTeachers(projection.BranchId).ToList() : null;
+            var projectionCient = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+            var teachers = roles == "Admin" ? _teacherService.GetTeachers().ToList() : roles == "BranchAdmin" ? _teacherService.GetTeachers(projection.BranchId).ToList() : roles == "Client" ? _teacherService.GetTeachersByClientId(projectionCient.ClientId).ToList() :null;
             var viewModelList = AutoMapper.Mapper.Map<List<TeacherProjection>, TeacherViewModel[]>(teachers);
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 ViewBag.userId = 0;
+            }
+            else if (roles == "Client")
+            {
+                ViewBag.userId = projectionCient.ClientId;
+                
             }
             else
             {
@@ -72,7 +80,7 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
 
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = (from b in _branchService.GetAllBranches()
                                   select new SelectListItem
@@ -88,6 +96,21 @@ namespace CMS.Web.Controllers
                     Branches = branchList,
                     CurrentUserRole = roles
                 });
+            }
+            else if (roles == "Client")
+            {
+
+                var projection = _clientAdminService.GetClientAdminById(roleUserId);
+
+                ViewBag.ClientId = projection.ClientId;
+                ViewBag.CurrentUserRole = roles;
+                return View(new TeacherViewModel
+                {
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName
+                });
+
             }
             else if (roles == "BranchAdmin")
             {
@@ -112,40 +135,49 @@ namespace CMS.Web.Controllers
         {
             var localTime = (_localDateTimeService.GetDateTime());
             var roles = viewModel.CurrentUserRole;
+
+
+            var clientId = viewModel.ClientId;
+            var clientName = viewModel.ClientName;
             var branchId = viewModel.BranchId;
             var branchName = viewModel.BranchName;
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser();
-                user.UserName = viewModel.Email.Trim();
-                user.Email = viewModel.Email.Trim();
-                user.CreatedBy = User.Identity.Name;
-                user.CreatedOn = localTime;
-                user.PhoneNumber = viewModel.ContactNo.Trim();
-                user.Teacher = new Teacher
+
+           
+                if (ModelState.IsValid)
                 {
-                    CreatedBy = User.Identity.Name,
-                    CreatedOn = localTime,
-                    FirstName = viewModel.FirstName.Trim(),
-                    MiddleName = viewModel.MiddleName == null ? "" : viewModel.MiddleName.Trim(),
-                    LastName = viewModel.LastName.Trim(),
-                    ContactNo = viewModel.ContactNo.Trim(),
-                    UserId = viewModel.UserId,
-                    Description = viewModel.Description.Trim(),
-                    BranchId = viewModel.BranchId,
-                    IsActive = viewModel.IsActive,
-                    Qualification =viewModel.Qualification
-                };
+                    var user = new ApplicationUser();
+                    user.UserName = viewModel.Email.Trim();
+                    user.Email = viewModel.Email.Trim();
+                    user.CreatedBy = User.Identity.Name;
+                    user.CreatedOn = localTime;
+                    user.PhoneNumber = viewModel.ContactNo.Trim();
+                    user.Teacher = new Teacher
+                    {
+                        CreatedBy = User.Identity.Name,
+                        CreatedOn = localTime,
+                        FirstName = viewModel.FirstName.Trim(),
+                        MiddleName = viewModel.MiddleName == null ? "" : viewModel.MiddleName.Trim(),
+                        LastName = viewModel.LastName.Trim(),
+                        ContactNo = viewModel.ContactNo.Trim(),
+                        UserId = viewModel.UserId,
+                        Description = viewModel.Description.Trim(),
+                        BranchId = viewModel.BranchId,
+                        ClientId = viewModel.ClientId,
+                        IsActive = viewModel.IsActive,
+                        Qualification = viewModel.Qualification
+                    };
 
-                string userPassword = PasswordHelper.GeneratePassword();
+                    string userPassword = PasswordHelper.GeneratePassword();
 
-                var result = _applicationUserService.SaveTeacher(user, userPassword);
+                    var result = _applicationUserService.SaveTeacher(user, userPassword);
+      
+               
 
                 if (result.Success)
                 {
                     string bodySubject = "Teacher Registration";
                     string message = viewModel.FirstName + " " + viewModel.MiddleName + " " + viewModel.LastName + "<br/>Teacher created successfully";
-                    SendMailToAdmin(roles, message, viewModel.Email, viewModel.BranchName, bodySubject);
+                    //SendMailToAdmin(roles, message, viewModel.Email, viewModel.BranchName, bodySubject);
                     Success(result.Results.FirstOrDefault().Message);
                     ModelState.Clear();
                     viewModel = new TeacherViewModel();
@@ -162,7 +194,7 @@ namespace CMS.Web.Controllers
                 }
             }
 
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = (from b in _branchService.GetAllBranches()
                                   select new SelectListItem
@@ -179,6 +211,17 @@ namespace CMS.Web.Controllers
                     Branches = branchList,
                     CurrentUserRole = roles
                 });
+            }
+            else if (roles == "Client")
+            {
+
+                return View(new TeacherViewModel
+                {
+                    CurrentUserRole = roles,
+                    ClientId = clientId,
+                    ClientName = clientName
+                });
+
             }
             else if (roles == "BranchAdmin")
             {
@@ -300,7 +343,18 @@ namespace CMS.Web.Controllers
 
         public ActionResult GetTeachers(int branchId)
         {
-            var teachers = _teacherService.GetTeachers(branchId).Select(x => new { x.UserId, x.FirstName, x.MiddleName, x.LastName });
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+           
+           
+           var teachers = roles=="Client"? _teacherService.GetTeachersByClientId(branchId).Select(x => new { x.UserId, x.FirstName, x.MiddleName, x.LastName }) : _teacherService.GetTeachers(branchId).Select(x => new { x.UserId, x.FirstName, x.MiddleName, x.LastName });
+
+            // var teachers = _teacherService.GetTeachers(branchId).Select(x => new { x.UserId, x.FirstName, x.MiddleName, x.LastName });
+            return Json(teachers, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult GetTeachersByClientId(int clientId)
+        {
+            var teachers = _teacherService.GetTeachersByClientId(clientId).Select(x => new { x.UserId, x.FirstName, x.MiddleName, x.LastName });
             return Json(teachers, JsonRequestBehavior.AllowGet);
         }
 

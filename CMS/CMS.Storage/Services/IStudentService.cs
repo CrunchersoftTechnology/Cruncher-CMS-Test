@@ -17,7 +17,11 @@ namespace CMS.Domain.Storage.Services
         decimal GetStudentFeeByUserId(string userId);
         decimal GetTotalFees(string selectedSubject, string selectedYear);
         IEnumerable<StudentProjection> GetStudentsByBranchId(int branchId);
+
+        IEnumerable<StudentProjection> GetStudentsByClientId(int clientId);
         IEnumerable<StudentProjection> GetStudentsByBranchAndClassId(int classId, int branchId);
+
+        IEnumerable<StudentProjection> GetStudentsByClientAndClassId(int classId, int clientId);
         StudentProjection GetStudentDetailForAttendance(int punchId, int branchId);
         IEnumerable<StudentProjection> GetClasses();
         IEnumerable<StudentProjection> GetAllStudentParentList();
@@ -27,7 +31,7 @@ namespace CMS.Domain.Storage.Services
         IEnumerable<StudentProjection> GetStudentsByClassBranch(string selectedClasses, string selectedBranch);
         IEnumerable<StudentGridModel> GetData(out int totalRecords, int filterClassName, string filterFirstName, int userRole,
             string filterLastName, int? limitOffset, int? limitRowCount, string orderBy, bool desc);
-        IEnumerable<StudentProjection> GetStudentsForSendAttendance(int classId, int branchId, int batchId, DateTime date);
+        IEnumerable<StudentProjection> GetStudentsForSendAttendance(int classId,int ClientId, int branchId, int batchId, DateTime date);
         IEnumerable<StudentProjection> GetClassesByBranchId(int branchId);
         IEnumerable<StudentProjection> GetBranchesTestByClassId(int classId);
         IEnumerable<StudentProjection> GetStudentByBranchClassBatchForTestPaper(string branchId, string selectedClasses, string selectedBatches);

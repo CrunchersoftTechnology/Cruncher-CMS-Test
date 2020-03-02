@@ -18,6 +18,8 @@ namespace CMS.Domain.Storage.Services
         TeacherProjection GetTeacherById(string teacherId);
         IEnumerable<TeacherProjection> GetTeachersBind();
         IEnumerable<TeacherProjection> GetTeachers(int branchId);
+
+        IEnumerable<TeacherProjection> GetTeachersByClientId(int clientId);
         IEnumerable<TeacherProjection> GetTeacherContactList();
         int GetTeachersCount();
         IEnumerable<TeacherGridModel> GetTeacherData(out int totalRecords, string filterFirstName, 

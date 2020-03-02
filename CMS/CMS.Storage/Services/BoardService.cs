@@ -71,6 +71,19 @@ namespace CMS.Domain.Storage.Services
 
         }
 
+        public IEnumerable<BoardProjection> GetBoardsByClientId(int ClientId)
+        {
+            return _repository.Project<Board, BoardProjection[]>(
+                 boards => (from b in boards
+                            where b.ClientId==ClientId
+                            select new BoardProjection
+                            {
+                                BoardId = b.BoardId,
+                                Name = b.Name
+                            }).ToArray());
+
+        }
+
         public CMSResult Save(Board newBoard)
         {
             CMSResult result = new CMSResult();

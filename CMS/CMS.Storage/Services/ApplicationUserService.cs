@@ -30,7 +30,7 @@ namespace CMS.Domain.Storage.Services
             {
                 isContactExists = _repository.Project<Student, bool>(students => (from s in students where s.StudentContact == user.PhoneNumber select s).Any());
             }
-            var isPunchExists = _repository.Project<Student, bool>(students => (from s in students where s.PunchId == user.Student.PunchId && s.BranchId == user.Student.BranchId select s).Any());
+            var isPunchExists = _repository.Project<Student, bool>(students => (from s in students where s.PunchId == user.Student.PunchId && s.BranchId == user.Student.BranchId && s.ClientId==user.Student.ClientId select s).Any());
 
             if (isEmailExists)
             {
@@ -198,7 +198,10 @@ namespace CMS.Domain.Storage.Services
             var isEmailExists = _repository.Project<BranchAdmin, bool>(branchAdmins => (from a in branchAdmins where a.User.Email == user.Email select a).Any());
             var isContactExists = _repository.Project<BranchAdmin, bool>(branchAdmins => (from a in branchAdmins where a.ContactNo == user.PhoneNumber select a).Any());
 
-            if (isEmailExists)
+            var isEmailExistsClient = _repository.Project<ClientAdmin, bool>(clientAdmins => (from a in clientAdmins where a.User.Email == user.Email select a).Any());
+            var isContactExistsClient = _repository.Project<ClientAdmin, bool>(clientAdmins => (from a in clientAdmins where a.ContactNo == user.PhoneNumber select a).Any());
+
+            if (isEmailExists || isEmailExistsClient )
             {
                 cmsresult.Results.Add(new Result
                 {
@@ -206,7 +209,7 @@ namespace CMS.Domain.Storage.Services
                     Message = "Email already exists!"
                 });
             }
-            if (isContactExists)
+            if (isContactExists || isContactExistsClient)
             {
                 cmsresult.Results.Add(new Result
                 {
@@ -215,7 +218,7 @@ namespace CMS.Domain.Storage.Services
                 });
             }
 
-            if (!isContactExists && !isEmailExists)
+            if (!isContactExists && !isEmailExists || !isEmailExistsClient && !isContactExistsClient)
             {
                 var chkUser = UserManager.Create(user, password);
                 if (chkUser.Succeeded)

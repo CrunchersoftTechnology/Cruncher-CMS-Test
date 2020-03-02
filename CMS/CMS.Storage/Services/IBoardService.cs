@@ -9,6 +9,8 @@ namespace CMS.Domain.Storage.Services
     public interface IBoardService
     {
         IEnumerable<BoardProjection> GetBoards();
+
+        IEnumerable<BoardProjection> GetBoardsByClientId(int ClientId);
         BoardProjection GetBoardById(int boardId);
         CMSResult Save(Board newBoard);
         CMSResult Update(Board oldBoard);

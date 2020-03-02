@@ -9,6 +9,11 @@ namespace CMS.Web.ViewModels
 {
     public class MasterFeeViewModel
     {
+
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
+
         public int MasterFeeId { get; set; }
 
         [Required]
@@ -35,6 +40,12 @@ namespace CMS.Web.ViewModels
 
         [Display(Name = "Subject")]
         public string SubjectName { get; set; }
-        
+
+        public string CurrentUserRole { get; set; }
+
+
+        [Display(Name = "Client")]
+        public IEnumerable<SelectListItem> Clients { get; set; }
+
     }
 }

@@ -10,6 +10,8 @@ namespace CMS.Domain.Storage.Services
     {
         CMSResult Save(BranchAdmin branchAdmin);
         BranchAdminProjection GetBranchAdminById(string branchAdminId);
+
+      
         CMSResult Update(BranchAdmin branchAdmin);
         IEnumerable<BranchAdminProjection> GetBranches();
         CMSResult Delete(string userId);

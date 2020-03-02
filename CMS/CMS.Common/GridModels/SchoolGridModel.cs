@@ -9,14 +9,11 @@ namespace CMS.Common.GridModels
 {
   public  class SchoolGridModel
     {
-        public string UserId { get; set; }
-
+       // public string UserId { get; set; }
         public int SchoolId { get; set; }
-
         public string SchoolName { get; set; }
 
         public string CenterNumber { get; set; }
-
         [Exclude]
         public string Action { get; set; }
 

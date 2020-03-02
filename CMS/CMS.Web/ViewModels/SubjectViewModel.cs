@@ -22,7 +22,6 @@ namespace CMS.Web.ViewModels
         [MinLength(2, ErrorMessage = "The field Subject Name must be a minimum length of '2' and maximum length of '50'.")]
         [Display(Name = "Subject Name")]
         public string Name { get; set; }
-
         [Display(Name = "Class")]
         public IEnumerable<SelectListItem> Classes { get; set; }
 

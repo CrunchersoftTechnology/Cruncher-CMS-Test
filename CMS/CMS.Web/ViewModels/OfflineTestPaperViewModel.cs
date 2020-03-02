@@ -54,10 +54,15 @@ namespace CMS.Web.ViewModels
         [Display(Name = "Branch")]
         public int? BranchId { get; set; }
 
+        [Display(Name = "Client")]
+        public int? ClientId { get; set; }
+
         [Display(Name = "Batch")]
         public int? BatchId { get; set; }
 
         public IEnumerable<SelectListItem> Branches { get; set; }
+
+        public IEnumerable<SelectListItem> Clients { get; set; }
 
         public IEnumerable<SelectListItem> Classes { get; set; }
 
@@ -68,6 +73,9 @@ namespace CMS.Web.ViewModels
         public string CurrentUserRole { get; set; }
 
         public string BranchName { get; set; }
+
+
+        public string ClientName { get; set; }
 
         public string Media { get; set; }
 

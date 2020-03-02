@@ -49,7 +49,23 @@ namespace CMS.Domain.Storage.Services
                             }).ToArray());
         }
 
-        public CMSResult Save(Batch newBatch,int ClientId)
+        public CMSResult Save(Batch newBatch)
+        {
+            CMSResult result = new CMSResult();
+            var isExists = _repository.Project<Batch, bool>(batches => (from batch in batches where batch.Name == newBatch.Name && batch.ClassId == newBatch.ClassId select batch).Any());
+            if (isExists)
+            {
+                result.Results.Add(new Result { IsSuccessful = false, Message = string.Format("Batch '{0}' already exists!", newBatch.Name) });
+            }
+            else
+            {
+                _repository.Add(newBatch);
+                result.Results.Add(new Result { IsSuccessful = true, Message = string.Format("Batch '{0}' successfully added!", newBatch.Name) });
+            }
+            return result;
+        }
+
+        public CMSResult Save(int ClientId,Batch newBatch)
         {
             CMSResult result = new CMSResult();
             var isExists = _repository.Project<Batch, bool>(batches => (from batch in batches where batch.Name == newBatch.Name && batch.ClassId == newBatch.ClassId && batch.ClientId==newBatch.ClientId select batch).Any());
@@ -59,6 +75,7 @@ namespace CMS.Domain.Storage.Services
             }
             else
             {
+                newBatch.ClientId = ClientId;
                 _repository.Add(newBatch);
                 result.Results.Add(new Result { IsSuccessful = true, Message = string.Format("Batch '{0}' successfully added!", newBatch.Name) });
             }
@@ -131,6 +148,7 @@ namespace CMS.Domain.Storage.Services
             return _repository.Project<Batch, BatchProjection>(
                 batches => (from batch in batches
                             where batch.BatchId == batchId
+                            
                             select new BatchProjection
                             {
                                 BatchId = batch.BatchId,
@@ -264,7 +282,6 @@ namespace CMS.Domain.Storage.Services
                  where b.ClientId == ClientId
                  select new BatchGridModel
                  {
-
                      BatchId = b.BatchId,
                      BatchName = b.Name,
                      ClassName = b.Classes.Name,
@@ -276,7 +293,7 @@ namespace CMS.Domain.Storage.Services
 
             if (filterClassName != 0)
             {
-                query = query.Where(p => p.ClassId == filterClassName && p.ClientId == ClientId);
+                query = query.Where(p => p.ClassId == filterClassName  && p.ClientId == ClientId);
             }
             totalRecords = query.Count();
 

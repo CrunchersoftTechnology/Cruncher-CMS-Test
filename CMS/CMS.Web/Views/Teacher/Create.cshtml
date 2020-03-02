@@ -12,6 +12,8 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.CurrentUserRole)
     @Html.HiddenFor(m => m.BranchName)
+    @Html.HiddenFor(m=>m.ClientId)
+    @Html.HiddenFor(m => m.ClientName)
 
     <div class="form-horizontal">
         <hr />
@@ -25,6 +27,17 @@
                     @Html.DropDownListFor(model => model.BranchId, new SelectList(Model.Branches, "Value", "Text"),
                     "Select Branch", new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.BranchId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        else if (Model.CurrentUserRole == "Client")
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.ClientName, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClientName" })
+                <div class="col-md-10">
+                    @Html.EditorFor(m => m.ClientName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(m => m.ClientId)
                 </div>
             </div>
         }

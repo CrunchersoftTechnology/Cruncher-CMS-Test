@@ -29,6 +29,7 @@ namespace CMS.Domain.Storage.Services
                                  && a.BatchId == attendance.BatchId
                                  && a.Date == attendance.Date
                                  && a.BranchId == attendance.BranchId
+                                  && a.ClientId == attendance.ClientId
                                  select a).Any());
 
             if (isExists)
@@ -41,6 +42,7 @@ namespace CMS.Domain.Storage.Services
             }
             else
             {
+                attendance.ClientId = attendance.ClientId;
                 _repository.Add(attendance);
                 result.Results.Add(new Result
                 {
@@ -197,6 +199,25 @@ namespace CMS.Domain.Storage.Services
                                     Activity = a.Activity,
                                     // SubjectName = a.Batch.Subject.Name,
                                     BranchName = a.Branch.Name
+                                }).ToArray());
+        }
+
+        public IEnumerable<AttendanceProjection> GetAttendanceByClientId(int clientId)
+        {
+            return _repository.Project<Attendance, AttendanceProjection[]>(
+                attendances => (from a in attendances
+                                where a.ClientId == clientId
+                                orderby a.Date descending
+                                select new AttendanceProjection
+                                {
+                                    AttendanceId = a.AttendanceId,
+                                    ClassName = a.Class.Name,
+                                    BatchName = a.Batch.Name,
+                                    Date = a.Date,
+                                    TeacherName = a.Teacher.FirstName + " " + a.Teacher.MiddleName + " " + a.Teacher.LastName,
+                                    Activity = a.Activity,
+                                    // SubjectName = a.Batch.Subject.Name,
+                                    ClientName = a.Client.Name
                                 }).ToArray());
         }
 

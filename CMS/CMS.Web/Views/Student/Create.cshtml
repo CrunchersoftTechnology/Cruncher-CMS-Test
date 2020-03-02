@@ -95,6 +95,7 @@
     @Html.HiddenFor(m => m.IsIdExits)
     @Html.HiddenFor(m => m.PaymentLists)
     @Html.HiddenFor(m => m.PaymentErrorMessage)
+    @Html.HiddenFor(m => m.ClientId)
     <div class="row">
         <div class="col-sm-12">
             <div class="container">
@@ -103,7 +104,7 @@
                     <h3>Official Details</h3><hr />
                     <div class="row">
                         <div class="col-md-6">
-                            @if (Model.CurrentUserRole == "Admin")
+                            @if (Model.CurrentUserRole == "Admin" || Model.CurrentUserRole=="Client")
                             {
                                 <div class="form-group">
                                     @Html.LabelFor(m => m.Branches, htmlAttributes: new { @class = "control-label col-md-3 asterisk_input", @id = "lblBranchId" })
@@ -114,7 +115,7 @@
                                     </div>
                                 </div>
                             }
-                            else if (Model.CurrentUserRole == "BranchAdmin")
+                            else if (Model.CurrentUserRole == "BranchAdmin" )
                             {
                                 <div class="form-group">
                                     @Html.LabelFor(m => m.BranchName, htmlAttributes: new { @class = "control-label col-md-3 asterisk_input", @id = "lblBranchName" })

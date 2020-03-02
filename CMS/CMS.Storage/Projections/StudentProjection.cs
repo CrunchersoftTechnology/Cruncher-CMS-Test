@@ -8,6 +8,11 @@ namespace CMS.Domain.Storage.Projections
 {
     public class StudentProjection
     {
+
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
+
         public int SubjectId { get; set; }
 
         public int BatchId { get; set; }
@@ -111,5 +116,7 @@ namespace CMS.Domain.Storage.Projections
         public DateTime Date { get; set; }
 
        // public string PaymentList { get; set; }
+
+        
     }
 }

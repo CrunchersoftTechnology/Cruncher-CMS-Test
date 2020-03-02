@@ -24,6 +24,10 @@ namespace CMS.Common.GridModels
 
         public string BranchName { get; set; }
 
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
+
         public bool IsActive { get; set; }
         [Exclude]
         public string Action { get; set; }

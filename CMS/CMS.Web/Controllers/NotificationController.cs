@@ -33,8 +33,9 @@ namespace CMS.Web.Controllers
         readonly INotificationService _notificationService;
         readonly ISubjectService _subjectService;
         readonly ILogger _logger;
+        readonly IClientAdminService _clientAdminService;
 
-        public NotificationController(IAspNetRoles aspNetRolesService, IBranchService branchService,
+        public NotificationController(IClientAdminService clientAdminService, IAspNetRoles aspNetRolesService, IBranchService branchService,
             IBranchAdminService branchAdminService, IStudentService studentService, IEmailService emailService,
             ISmsService smsService, ITeacherService teacherService, IRepository repository, ISendNotificationService sendNotificationService,
             INotificationService notificationService, ISubjectService subjectService, ILogger logger)
@@ -51,51 +52,14 @@ namespace CMS.Web.Controllers
             _notificationService = notificationService;
             _subjectService = subjectService;
             _logger = logger;
+            _clientAdminService =clientAdminService;
         }
 
         // GET: Notification
         public ActionResult Index()
         {
             #region rough
-            //var roleUserId = User.Identity.GetUserId();
-            //var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
-            //if (roles == "Admin")
-            //{
-            //    var branchList = (from b in _branchService.GetAllBranches()
-            //                      select new SelectListItem
-            //                      {
-            //                          Value = b.BranchId.ToString(),
-            //                          Text = b.Name
-            //                      }).ToList();
-
-            //    ViewBag.BranchId = 0;
-            //    ViewBag.CurrentUserRole = roles;
-
-            //    return View(new NotificationViewModel
-            //    {
-            //        Branches = branchList,
-            //        CurrentUserRole = roles
-            //    });
-            //}
-            //else if (roles == "BranchAdmin")
-            //{
-            //    var projection = _branchAdminService.GetBranchAdminById(roleUserId);
-            //    ViewBag.BranchId = projection.BranchId;
-            //    var classList = (from c in _studentService.GetStudentsByBranchId(projection.BranchId)
-            //                     select new SelectListItem
-            //                     {
-            //                         Value = c.ClassId.ToString(),
-            //                         Text = c.ClassName
-            //                     }).ToList();
-            //    ViewBag.CurrentUserRole = roles;
-            //    return View(new NotificationViewModel
-            //    {
-            //        CurrentUserRole = roles,
-            //        BranchId = projection.BranchId,
-            //        BranchName = projection.BranchName,
-            //        Classes = classList
-            //    });
-            //} 
+           
             #endregion
             return View();
         }
@@ -106,7 +70,7 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
 
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = (from b in _branchService.GetAllBranches()
                                   select new SelectListItem
@@ -122,6 +86,38 @@ namespace CMS.Web.Controllers
                 {
                     Branches = branchList,
                     CurrentUserRole = roles
+                });
+            }
+            else if (roles == "Client")
+            {
+                var projection = _clientAdminService.GetClientAdminById(roleUserId);
+                ViewBag.ClientId = projection.ClientId;
+
+
+                var branchList = (from b in _branchService.GetAllBranches()
+                                  select new SelectListItem
+                                  {
+                                      Value = b.BranchId.ToString(),
+                                      Text = b.Name
+                                  }).ToList();
+
+                var classList = (from c in _studentService.GetStudentsByClientId(projection.ClientId)
+                                 select new SelectListItem
+                                 {
+                                     Value = c.ClassId.ToString(),
+                                     Text = c.ClassName
+                                 }).ToList();
+
+                ViewBag.BranchId = 0;
+                ViewBag.CurrentUserRole = roles;
+
+                return View(new NotificationViewModel
+                {
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName,
+                    Classes = classList,
+                    Branches = branchList,
                 });
             }
             else if (roles == "BranchAdmin")

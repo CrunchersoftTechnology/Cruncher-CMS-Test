@@ -22,10 +22,8 @@
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(x => x.ClassName)
-    @Html.HiddenFor(x => x.SelectedClasses)
     @Html.HiddenFor(m => m.CurrentUserRole)
     @Html.HiddenFor(m => m.ClientName)
-
 
     <div class="form-horizontal">
         <hr />
@@ -53,17 +51,17 @@
                 </div>
             </div>
         }
+
         <div class="form-group">
             @Html.LabelFor(m => m.Classes, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClassName" })
-            <span class="control-label glyphicon glyphicon-plus-sign" title="Click on this button to add new
+            <span class="control-label glyphicon glyphicon-plus-sign" title="Click on this button to add new 
            class." id="tooltipClsName" onclick="@("window.location.href='" + @Url.Action("Create", "Class") + "'");"></span>
             <div class="col-md-3">
-                @Html.DropDownListFor(model => model.ClassId, (SelectList)Model.Classes, "Select Class", new
-           {
-               @class = "form-control"@*, @onchange = "FillSubjects(this.value)"*@ })
+                @Html.DropDownListFor(model => model.ClassId, (SelectList)Model.Classes, "Select Class", new { @class = "form-control"@*, @onchange = "FillSubjects(this.value)"*@ })
                 @Html.ValidationMessageFor(model => model.ClassId, "", new { @class = "text-danger" })
             </div>
         </div>
+
         <div class="form-group">
             @Html.LabelFor(m => m.Name, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblName" })
             <span class="control-label glyphicon glyphicon-info-sign" title="Batch name, will be required 
@@ -107,9 +105,6 @@
     <script>
         $(document).ready(function () {
             $("#tooltipClsName").tooltip({ track: true });
-            $('#ClassId').on('change', function () {
-                RequiredValidation('#ClassId', '#lblClassId')
-            });
             $("#tooltipSubName").tooltip({ track: true });
             $("#tooltipName").tooltip({ track: true });
             @*if (parseInt(@ViewBag.ClassId) > 0) {
@@ -123,26 +118,43 @@
             $('#OutTime').timepicki();
         });
 
-        function FillClasses(classId) {
-            var selected = $("#ClassId").find("option:selected");
-            var arrSelected = [];
-            selected.each(function () {
-                arrSelected.push($(this).val());
-            });
-            var selectedClass = arrSelected.toString();
-            $("#SelectedClasses").val(selectedClass);
-        }
-
-
-        
+        @*function FillSubjects(classId) {
+            if ($('#ClassId :selected').text() != "Select Class") {
+                $.ajax({
+                    url: '/Subject/GetSubjects',
+                    type: "GET",
+                    dataType: "JSON",
+                    data: { classId: classId },
+                    success: function (subjects) {
+                        $("#SubjectId").html(""); // clear before appending new list
+                        $("#SubjectId").append($('<option></option>').val("").html("Select Subject"));
+                        $.each(subjects, function (i, sub) {
+                            $("#SubjectId").append(
+                                $('<option></option>').val(sub.SubjectId).html(sub.Name));
+                        });
+                        $("#SubjectId").val(@ViewBag.SubjectId);
+                    }
+                });
+            }
+            else {
+                $("#SubjectId").html("");
+            }
+        }*@
         $('#ClassId').on('change', function () {
             RequiredValidation('#ClassId', '#lblClassName')
         });
-        
+        //$('#SubjectId').on('change', function () {
+        //    RequiredValidation('#SubjectId', '#lblSubjects')
+        //});
         $('#Name').on('change', function () {
             RequiredValidation('#Name', '#lblName')
         });
-       
+        //$('#InTime').on('change', function () {
+        //    RequiredValidation('#InTime', '#lblInTime')
+        //});
+        //$('#OutTime').on('change', function () {
+        //    RequiredValidation('#OutTime', '#lblOutTime')
+        //});
 
     </script>
     @Scripts.Render("~/bundles/batchscript")

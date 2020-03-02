@@ -33,8 +33,9 @@ namespace CMS.Web.Controllers
         readonly ISmsService _smsService;
         readonly ISendNotificationService _sendNotificationService;
         readonly ISubjectService _subjectService;
+        readonly IClientAdminService _clientAdminService;
 
-        public InstallmentController(IInstallmentService installmentService, ILogger logger, IRepository repository,
+        public InstallmentController(IClientAdminService clientAdminService, IInstallmentService installmentService, ILogger logger, IRepository repository,
             IClassService classService, IStudentService studentService, IEmailService emailService,
             IBranchService branchService, IAspNetRoles aspNetRolesService, IBranchAdminService branchAdminService,
             ISmsService smsService, ISendNotificationService sendNotificationService,
@@ -52,31 +53,41 @@ namespace CMS.Web.Controllers
             _smsService = smsService;
             _sendNotificationService = sendNotificationService;
             _subjectService = subjectService;
+            _clientAdminService = clientAdminService;
         }
 
-        [Authorize(Roles = Common.Constants.AdminRole + "," + Common.Constants.BranchAdminRole)]
+        [Authorize(Roles = Common.Constants.AdminRole + "," + Common.Constants.BranchAdminRole + "," + Common.Constants.ClientAdminRole)]
         public ActionResult Index(int? classId, string userId)
         {
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+
+            
             var projection = roles == "BranchAdmin" ? _branchAdminService.GetBranchAdminById(roleUserId) : null;
+            var projectionClient = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
 
             ViewBag.BranchId = roles == "BranchAdmin" ? projection.BranchId : 0;
+            ViewBag.ClientId = roles == "Client" ? projectionClient.ClientId : 0;
             ViewBag.ClassList = (from c in _classService.GetClasses()
                                  select new SelectListItem
                                  {
                                      Value = c.ClassId.ToString(),
                                      Text = c.Name
                                  }).ToList();
-
-            var installment = (roles == "Admin" && classId == null && userId == null) ? _installmentService.GetAllInstallments().ToList() : (roles == "Client" && classId == null && userId == null) ? _installmentService.GetAllInstallments().ToList()
-                : (roles == "BranchAdmin" && classId == null && userId == null) ? _installmentService.GetInstallmentsByBranchId(projection.BranchId).ToList() : _installmentService.GetInstallments((int)classId, userId).ToList();
+            var installment = (roles == "Admin" && classId == null && userId == null) ? _installmentService.GetAllInstallments().ToList()
+               : (roles == "BranchAdmin" && classId == null && userId == null) ? _installmentService.GetInstallmentsByBranchId(projection.BranchId).ToList()
+                : (roles == "Client" && classId == null && userId == null) ? _installmentService.GetInstallmentsByClientId(projectionClient.ClientId).ToList() : _installmentService.GetInstallments((int)classId, userId).ToList();
             ViewBag.ClassId = classId;
             ViewBag.UserId = userId;
             var viewModelList = AutoMapper.Mapper.Map<List<InstallmentProjection>, InstallmentViewModel[]>(installment);
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 ViewBag.userId = 0;
+            }
+            else if (roles == "Client")
+            {
+                ViewBag.userId = projectionClient.ClientId;
             }
             else
             {
@@ -85,13 +96,13 @@ namespace CMS.Web.Controllers
             return View(viewModelList);
         }
 
-        [Authorize(Roles = Common.Constants.AdminRole + "," + Common.Constants.BranchAdminRole)]
+        [Authorize(Roles = Common.Constants.AdminRole + "," + Common.Constants.BranchAdminRole + "," + Common.Constants.ClientAdminRole)]
         public ActionResult Create()
         {
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var classes = _classService.GetClasses().ToList();
-            if (roles == "Admin" ||roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = _branchService.GetAllBranches().ToList();
 
@@ -104,6 +115,22 @@ namespace CMS.Web.Controllers
                     Classes = new SelectList(classes, "ClassId", "Name")
                 });
             }
+            else if (roles == "Client")
+            {
+
+                var projection = _clientAdminService.GetClientAdminById(roleUserId);
+
+                ViewBag.ClientId = projection.ClientId;
+                return View(new InstallmentViewModel
+                {
+                    CurrentUserRole = roles,
+                    BranchId = projection.ClientId,
+                    BranchName = projection.ClientName,
+                    Classes = new SelectList(classes, "ClassId", "Name")
+                });
+
+            }
+
             else if (roles == "BranchAdmin")
             {
                 var projection = _branchAdminService.GetBranchAdminById(roleUserId);
@@ -132,15 +159,7 @@ namespace CMS.Web.Controllers
             ViewBag.installmentCount = viewModel.InstallmentNo;
 
             var students = _studentService.GetStudentById(viewModel.UserId);
-            //var commaseperatedList = students.SelectedSubjects ?? string.Empty;
-            //var subjectIds = commaseperatedList.Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(int.Parse);
-
-            //var subjects = _repository.LoadList<Subject>(x => subjectIds.Contains(x.SubjectId)).ToList();
-            //string subject = "";
-            //foreach (var s in subjects)
-            //{
-            //    subject += string.Format("{0}", s.Name);
-            //}
+         
 
             //var selectedSubjects =students.BatchName +" - "+ string.Join(",", subject.TrimEnd(',')) ;
             var studentFinalFee = _studentService.GetStudentFeeByUserId(viewModel.UserId);
@@ -149,6 +168,8 @@ namespace CMS.Web.Controllers
             var roles = viewModel.CurrentUserRole;
             var branchId = viewModel.BranchId;
             var branchName = viewModel.BranchName;
+            var clientId = viewModel.ClientId;
+            var clientName = viewModel.ClientName;
             var remainingPayment = remainFee - viewModel.Payment;
             var ReceivedFee = paidFee + viewModel.Payment;
             viewModel.RemainingFee = remainingPayment;
@@ -190,17 +211,30 @@ namespace CMS.Web.Controllers
                     {
                         ViewBag.ClassId = 0;
                         ViewBag.BranchId = 0;
-                        string createdBranchName = "", userName = "";
+                        ViewBag.clientId = 0;
+                        string createdName = "", userName = "";
                         bool isBranchAdmin = false;
+                        bool isClientAdmin = false;
                         if (viewModel.CurrentUserRole == "BranchAdmin")
                         {
                             isBranchAdmin = true;
-                            createdBranchName = viewModel.BranchName;
+                            createdName = viewModel.BranchName;
                             userName = User.Identity.GetUserName();
                         }
                         else
                         {
-                            createdBranchName = viewModel.BranchName;
+                            createdName = viewModel.BranchName;
+                            userName = User.Identity.GetUserName() + "(" + "Master Admin" + ")";
+                        }
+                        if (viewModel.CurrentUserRole == "Client")
+                        {
+                            isClientAdmin = true;
+                            createdName = viewModel.ClientName;
+                            userName = User.Identity.GetUserName();
+                        }
+                        else
+                        {
+                            createdName = viewModel.ClientName;
                             userName = User.Identity.GetUserName() + "(" + "Master Admin" + ")";
                         }
                         string body = string.Empty;
@@ -209,7 +243,7 @@ namespace CMS.Web.Controllers
                             body = reader.ReadToEnd();
                         }
                         body = body.Replace("{BatchWithSubjectName}", viewModel.StudBatch);
-                        body = body.Replace("{BranchName}", createdBranchName);
+                        body = body.Replace("{BranchName}", createdName);
                         body = body.Replace("{StudentName}", viewModel.StudentName);
                         body = body.Replace("{ClassName}", students.ClassName);
                         body = body.Replace("{TotalFees}", studentFinalFee.ToString());
@@ -290,11 +324,13 @@ namespace CMS.Web.Controllers
                 ViewBag.RemainingFee = viewModel.RemainingFee;
             }
 
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = _branchService.GetAllBranches().ToList();
                 viewModel.Branches = new SelectList(branchList, "BranchId", "Name");
             }
+            else if (roles == "Client")
+            { }
             else if (roles == "BranchAdmin")
             {
 

@@ -18,30 +18,59 @@
     @Html.HiddenFor(m => m.SubjectName)
     @Html.HiddenFor(m => m.SelectedBatchesName)
     @Html.HiddenFor(m => m.Media)
+    @Html.HiddenFor(m => m.ClientId)
+  
 
     <div class="form-horizontal">
+
+
+        @if (Model.CurrentUserRole == "Admin")
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.Clients, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClientId" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.ClientId, new SelectList(Model.Clients, "Value", "Text"),
+                    "Select Branch", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        else if (Model.CurrentUserRole == "Client")
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.ClientName, htmlAttributes: new { @class = "control-label col-md-2 asterisk_input", @id = "lblClientName" })
+                <div class="col-md-10">
+                    @Html.EditorFor(m => m.ClientName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(m => m.ClientId)
+                </div>
+            </div>
+        }
         <hr />
         <div id="message">
         </div>
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @if (Model.CurrentUserRole == "Admin")
-        { <div class="form-group">
-            @Html.LabelFor(m => m.Branches, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.BranchId, new SelectList(Model.Branches, "Value", "Text"),
-            new { @class = "form-control", @onchange = "FillClasses(this.value)", @multiple = "multiple", @autocomplete = "off" })
+        @if (Model.CurrentUserRole == "Admin" || Model.CurrentUserRole == "Client")
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.Branches, htmlAttributes: new { @class = "control-label col-md-3 asterisk_input", @id = "lblBranchId" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.BranchId, new SelectList(Model.Branches, "Value", "Text"),
+                    "Select Branch", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.BranchId, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group" id="classDetail">
-            @Html.LabelFor(m => m.ClassId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ClassId, new SelectList(Enumerable.Empty<SelectListItem>
-                (),
-                "ClassId", "ClassName"), "Select Class", new { @class = "form-control", @onchange = "FillSubjectByClassId(this.value)" })
+            <div class="form-group" id="classDetail">
+                @Html.LabelFor(m => m.Classes, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.ClassId, new SelectList(Model.Classes, "Value", "Text"), "Select Class",
+new { @class = "form-control", @onchange = "FillSubjectByClassId(this.value)" })
+                </div>
             </div>
-        </div>
         }
+
+
         else if (Model.CurrentUserRole == "BranchAdmin")
         {
             <div class="form-group">
@@ -63,7 +92,7 @@
                 @Html.LabelFor(m => m.Classes, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownListFor(model => model.ClassId, new SelectList(Model.Classes, "Value", "Text"), "Select Class",
-            new { @class = "form-control", @onchange = "FillSubjectByClassId(this.value)" })
+new { @class = "form-control", @onchange = "FillSubjectByClassId(this.value)" })
                 </div>
             </div>
         }

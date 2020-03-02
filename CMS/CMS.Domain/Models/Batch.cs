@@ -7,6 +7,9 @@ namespace CMS.Domain.Models
 {
     public class Batch : AuditableEntity
     {
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
         public int BatchId { get; set; }
 
         public string Name { get; set; }
@@ -26,14 +29,5 @@ namespace CMS.Domain.Models
         {
             Students = new HashSet<Student>();
         }
-
-        public int ClientId { get; set; }
-
-        [ForeignKey("ClientId")]
-        public virtual Client Client { get; set; }
-
-        public virtual ICollection<Client> Clients { get; set; }
-
-        public virtual Client ClientName { get; set; }
     }
 }

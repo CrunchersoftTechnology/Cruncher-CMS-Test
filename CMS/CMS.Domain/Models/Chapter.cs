@@ -6,6 +6,10 @@ namespace CMS.Domain.Models
 {
     public class Chapter : AuditableEntity
     {
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
+
         public int ChapterId { get; set; }
         
         public string Name { get; set; }
@@ -18,5 +22,10 @@ namespace CMS.Domain.Models
         public int Weightage { get; set; }
 
         public virtual ICollection<Question> Questions { get; set; }
+
+    
+
+       
+      
     }
 }

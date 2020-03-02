@@ -10,7 +10,9 @@ namespace CMS.Domain.Storage.Services
     {
         IEnumerable<BatchProjection> GetBatches(int classId);
         IEnumerable<BatchProjection> GetAllBatches();
-        CMSResult Save(Batch batch, int ClientId);
+        CMSResult Save(Batch batch);
+
+        CMSResult Save(int ClientId,Batch batch);
         CMSResult Update(Batch batch);
         CMSResult Delete(int id);
         BatchProjection GetBatcheById(int batchId);
@@ -23,8 +25,9 @@ namespace CMS.Domain.Storage.Services
           int? limitOffset, int? limitRowCount, string orderBy, bool desc);
 
         IEnumerable<BatchGridModel> GetBatchDataByClientId(out int totalRecords, int filterClassName, int ClientId,
-        int? limitOffset, int? limitRowCount, string orderBy, bool desc);
+         int? limitOffset, int? limitRowCount, string orderBy, bool desc);
 
+        
         IEnumerable<BatchProjection> GetBatchesByBatchIds(string SelectedBatches);
         IEnumerable<BatchProjection> GetBatchesBySubjectId(int sujectId);
     }

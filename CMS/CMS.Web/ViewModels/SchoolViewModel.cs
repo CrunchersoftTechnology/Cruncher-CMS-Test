@@ -11,7 +11,6 @@ namespace CMS.Web.ViewModels
 
         public string ClientName { get; set; }
 
-
         public int SchoolId { get; set; }
 
         [Required]

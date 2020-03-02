@@ -2,6 +2,9 @@
 {
     public class ChapterProjection
     {
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
         public int ChapterId { get; set; }
         public int SubjectId { get; set; }
         public string ChapterName { get; set; }

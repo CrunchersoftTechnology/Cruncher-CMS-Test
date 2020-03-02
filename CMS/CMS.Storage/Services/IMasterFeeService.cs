@@ -10,6 +10,8 @@ namespace CMS.Domain.Storage.Services
     {
         IEnumerable<MasterFeeProjection> GetAllMasterFees();
         CMSResult Save(MasterFee masterfee);
+
+        CMSResult Save(int ClientId,MasterFee masterfee);
         CMSResult Update(MasterFee masterfee);
         CMSResult Delete(int id);
         IEnumerable<MasterFeeProjection> GetMasterFees(int subjectId, int classId);
@@ -17,5 +19,9 @@ namespace CMS.Domain.Storage.Services
         IEnumerable<MasterFeeGridModel> GetMasterFeeData(out int totalRecords, int filterClassName, int filterSubjectName,
         int? limitOffset,
             int? limitRowCount, string orderBy, bool desc);
+
+        IEnumerable<MasterFeeGridModel> GetMasterFeeDataByClientId(out int totalRecords, int filterClassName, int filterSubjectName,int ClientId,
+      int? limitOffset,
+          int? limitRowCount, string orderBy, bool desc);
     }
 }

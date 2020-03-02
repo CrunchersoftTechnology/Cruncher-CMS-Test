@@ -13,6 +13,8 @@ namespace CMS.Domain.Storage.Services
         CMSResult Delete(int branchId);
         IEnumerable<BranchProjection> GetAllBranches();
 
+        IEnumerable<BranchProjection> GetAllBranchesByClientId(int ClientId);
+
         BranchProjection GetBoardById(int id);
         int GetBranchesCount();
         IEnumerable<BranchGridModel> GetBranchDataByClientId(out int totalRecords, string BranchName,int userId,

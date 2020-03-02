@@ -17,6 +17,8 @@ namespace CMS.Domain.Storage.Services
         object[] GetStudentsAutoComplete(string query, int classId, int branchId);
         decimal GetCountInstallment(string userId);
         IEnumerable<InstallmentProjection> GetInstallmentsByBranchId(int branchId);
+
+        IEnumerable<InstallmentProjection> GetInstallmentsByClientId(int clientId);
         int GetInstallmentCount(string userId);
         IEnumerable<InstallmentGridModel> GetInstallmentData(out int totalRecords,int filterClassName, string filterUseId, int userId,
          int? limitOffset, int? limitRowCount, string orderBy, bool desc);

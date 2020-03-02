@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,5 +19,10 @@ namespace CMS.Common.GridModels
         [Exclude]
         public string Action { get; set; }
         public DateTime CreatedOn { get; set; }
+
+        public int ClientId { get; set; }
+
+        [Display(Name = "Client")]
+        public string ClientName { get; set; }
     }
 }

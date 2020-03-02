@@ -34,8 +34,9 @@ namespace CMS.Web.Controllers
         readonly IBranchAdminService _branchAdminService;
         readonly IEmailService _emailService;
         readonly ISendNotificationService _sendNotificationService;
+        readonly IClientAdminService _clientAdminService;
 
-        public StudentTimetableController(IApiService apiService, IStudentTimetableService studentTimetableService, ILogger logger,
+        public StudentTimetableController(IClientAdminService clientAdminService, IApiService apiService, IStudentTimetableService studentTimetableService, ILogger logger,
             IRepository repository, IBranchService branchService,
             IStudentService studentService, IBatchService batchService,
             IClassService classService, IAspNetRoles aspNetRolesService,
@@ -53,6 +54,7 @@ namespace CMS.Web.Controllers
             _branchAdminService = branchAdminService;
             _emailService = emailService;
             _sendNotificationService = sendNotificationService;
+            _clientAdminService = clientAdminService;
         }
         // GET: StudentTimetable
         public ActionResult Index()
@@ -60,9 +62,14 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "BranchAdmin" ? _branchAdminService.GetBranchAdminById(roleUserId) : null;
-            if (roles == "Admin" || roles=="Client")
+            var projectionClient = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+            if (roles == "Admin")
             {
                 ViewBag.userId = 0;
+            }
+            else if (roles == "Client")
+            {
+                ViewBag.userId = projectionClient.ClientId;
             }
             else
             {
@@ -76,7 +83,7 @@ namespace CMS.Web.Controllers
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
 
-            if (roles == "Admin" || roles=="Client")
+            if (roles == "Admin")
             {
                 var branchList = (from b in _branchService.GetAllBranches()
                                   select new SelectListItem
@@ -93,6 +100,41 @@ namespace CMS.Web.Controllers
                     Branches = branchList,
                     CurrentUserRole = roles
                 });
+            }
+            else if (roles == "Client")
+            {
+
+                var projection = _clientAdminService.GetClientAdminById(roleUserId);
+                ViewBag.ClientId = projection.ClientId;
+
+                var branchList = (from b in _branchService.GetAllBranches()
+                                  select new SelectListItem
+                                  {
+                                      Value = b.BranchId.ToString(),
+                                      Text = b.Name
+                                  }).ToList();
+
+                var classList = (from c in _studentService.GetStudentsByClientId(projection.ClientId)
+                                 select new SelectListItem
+                                 {
+                                     Value = c.ClassId.ToString(),
+                                     Text = c.ClassName
+                                 }).ToList();
+
+                ViewBag.BranchId = 0;
+                ViewBag.CurrentUserRole = roles;
+
+                return View(new StudentTimetableViewModel
+                {
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName,
+                    Classes = classList,
+                    Branches = branchList,
+                    SelectedBranches = projection.ClientId.ToString()
+                });
+
+
             }
             else if (roles == "BranchAdmin")
             {

@@ -6,15 +6,17 @@ namespace CMS.Web.ViewModels
 {
     public class BatchViewModel
     {
-       
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
 
         public int BatchId { get; set; }
 
-        [Required(ErrorMessage = "The Class field is required.")]
-        public int ClassId { get; set; }
-
+        //[Required(ErrorMessage = "The subject field is required.")]
+        //public int SubjectId { get; set; }
 
         [Required]
+     // [RegularExpression("^[a-zA-Z&]+[a-zA-Z0-9&\\- ]*$", ErrorMessage = "Batch Name should contain A-Z, a-z, 0-9, &, -.")]
         [MaxLength(50, ErrorMessage = "The field Batch Name must be a minimum length of '5' and maximum length of '50'.")]
         [MinLength(5, ErrorMessage = "The field Batch Name must be a minimum length of '5' and maximum length of '50'.")]
         [Display(Name = "Batch Name")]
@@ -30,18 +32,14 @@ namespace CMS.Web.ViewModels
         [Display(Name = "Out-Time")]
         public string OutTime { get; set; }
 
-        public int ClientId { get; set; }
-
-        public string ClientName { get; set; }
-
         [Display(Name = "Class")]
         public IEnumerable<SelectListItem> Classes { get; set; }
 
+        [Required(ErrorMessage = "The Class field is required.")]
+        public int ClassId { get; set; }
+
         [Display(Name = "Class")]
         public string ClassName { get; set; }
-
-        [Required(ErrorMessage = "Class is required.")]
-        public string SelectedClasses { get; set; }
 
         public string CurrentUserRole { get; set; }
 

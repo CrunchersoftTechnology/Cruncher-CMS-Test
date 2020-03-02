@@ -158,6 +158,28 @@ namespace CMS.Domain.Storage.Services
                                  }).ToArray());
         }
 
+        public IEnumerable<InstallmentProjection> GetInstallmentsByClientId(int clientId)
+        {
+            return _repository.Project<Installment, InstallmentProjection[]>(
+                installments => (from i in installments
+                                 where i.Student.Student.ClientId == clientId
+                                 orderby i.CreatedOn descending
+                                 select new InstallmentProjection
+                                 {
+                                     FirstName = i.Student.Student.FirstName,
+                                     LastName = i.Student.Student.LastName,
+                                     MiddleName = i.Student.Student.MiddleName,
+                                     ClassName = i.Class.Name,
+                                     Payment = i.Payment,
+                                     CreatedOn = i.CreatedOn,
+                                     FinalFee = i.Student.Student.FinalFees,
+                                     RemainingFee = i.RemainingFee,
+                                     ReceiptBookNumber = i.ReceiptBookNumber,
+                                     ReceiptNumber = i.ReceiptNumber
+                                 }).ToArray());
+        }
+
+
         public int GetInstallmentCount(string userId)
         {
             var d = _repository.Project<Installment, int>(

@@ -17,7 +17,6 @@ namespace CMS.Domain.Storage.Services
         {
             _repository = repository;
         }
-
         public CMSResult Delete(int id)
         {
             CMSResult result = new CMSResult();
@@ -81,14 +80,27 @@ namespace CMS.Domain.Storage.Services
                             }).ToArray()).ToArray();
         }
 
+        public IEnumerable<SchoolProjection> GetAllSchoolsByClientId(int ClientId)
+        {
+            return _repository.Project<School, SchoolProjection[]>(
+                schools => (from school in schools
+                            where school.ClientId==ClientId
+                            select new SchoolProjection
+                            {
+                                SchoolId = school.SchoolId,
+                                CenterNumber = school.CenterNumber,
+                                Name = school.Name
+                            }).ToArray()).ToArray();
+        }
+
         public CMSResult Save(School newSchool)
         {
             CMSResult result = new CMSResult();
             var isExistsCenterNumber = false;
-            var isExistsName = _repository.Project<School, bool>(schools => (from s in schools where s.Name == newSchool.Name select s).Any());
+            var isExistsName = _repository.Project<School, bool>(schools => (from s in schools where s.Name == newSchool.Name && s.ClientId==newSchool.ClientId select s).Any());
             if (newSchool.CenterNumber != null)
             {
-               isExistsCenterNumber = _repository.Project<School, bool>(schools => (from s in schools where s.CenterNumber == newSchool.CenterNumber select s).Any());
+               isExistsCenterNumber = _repository.Project<School, bool>(schools => (from s in schools where s.CenterNumber == newSchool.CenterNumber && s.ClientId == newSchool.ClientId select s).Any());
             }
             if (isExistsName)
             {
@@ -182,22 +194,20 @@ namespace CMS.Domain.Storage.Services
             return query.ToList();
         }
 
+
         public IEnumerable<SchoolGridModel> GetSchoolDataByClientId(out int totalRecords, string Name, int userId,
-     int? limitOffset, int? limitRowCount, string orderBy, bool desc)
+          int? limitOffset, int? limitRowCount, string orderBy, bool desc)
         {
             int ClientId = userId;
-            var query = _repository.Project<School, IQueryable<SchoolGridModel>>(Schools => (
-                 from b in Schools
-
+            var query = _repository.Project<School, IQueryable<SchoolGridModel>>(Schooles => (
+                 from s in Schooles
                  select new SchoolGridModel
                  {
-                     UserId = b.UserId,
-                     ClientId = b.ClientId,
-                     SchoolId = b.SchoolId,
-                     SchoolName = b.Name,
-                     //Address = b.Address,
-                     CreatedOn = b.CreatedOn,
-
+                     SchoolId = s.SchoolId,
+                     ClientId = s.ClientId,
+                     SchoolName = s.Name,
+                     CenterNumber = s.CenterNumber,
+                     CreatedOn = s.CreatedOn,
                  })).AsQueryable();
             if (ClientId != 0)
             {
@@ -219,7 +229,12 @@ namespace CMS.Domain.Storage.Services
                         else
                             query = query.OrderByDescending(p => p.SchoolName);
                         break;
-                   
+                    case nameof(SchoolGridModel.CenterNumber):
+                        if (!desc)
+                            query = query.OrderBy(p => p.CenterNumber);
+                        else
+                            query = query.OrderByDescending(p => p.CenterNumber);
+                        break;
                     default:
                         if (!desc)
                             query = query.OrderBy(p => p.CreatedOn);
@@ -234,6 +249,5 @@ namespace CMS.Domain.Storage.Services
             }
             return query.ToList();
         }
-
     }
 }

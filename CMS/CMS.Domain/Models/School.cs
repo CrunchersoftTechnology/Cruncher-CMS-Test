@@ -9,8 +9,6 @@ namespace CMS.Domain.Models
     {
         public int SchoolId { get; set; }
 
-        public string UserId { get; set; }
-
         [Required]
         [MaxLength(200)]
         public string Name { get; set; }
@@ -18,8 +16,6 @@ namespace CMS.Domain.Models
         [MaxLength(50)]
         public string CenterNumber { get; set; }
 
-        [NotMapped]
-        public bool IsChangeDetected { get; set; }
         public int ClientId { get; set; }
 
         [ForeignKey("ClientId")]

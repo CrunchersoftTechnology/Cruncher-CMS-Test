@@ -129,6 +129,7 @@ namespace CMS.Domain.Storage.Services
             return _repository.Project<Teacher, TeacherProjection[]>(
                 teachers => (from t in teachers
                              orderby t.FirstName
+                             where t.ClientId==branchId
                              select new TeacherProjection
                              {
                                  UserId = t.UserId,
@@ -142,6 +143,29 @@ namespace CMS.Domain.Storage.Services
                                  Qualification=t.Qualification
                              }).ToArray());
         }
+
+        public IEnumerable<TeacherProjection> GetTeachersByClientId(int clientId)
+        {
+            return _repository.Project<Teacher, TeacherProjection[]>(
+                teachers => (from t in teachers
+                             orderby t.FirstName
+                             where t.ClientId==clientId
+                             select new TeacherProjection
+                             {
+                                
+                                 UserId = t.UserId,
+                                 FirstName = t.FirstName,
+                                 MiddleName = t.MiddleName,
+                                 LastName = t.LastName,
+                                 ContactNo = t.ContactNo,
+                                 Description = t.Description,
+                                 Email = t.User.Email,
+                                 TId = t.TId,
+                                 Qualification = t.Qualification,
+                                 ClientId = t.ClientId
+                             }).ToArray());
+        }
+
 
         public IEnumerable<TeacherProjection> GetTeacherContactList()
         {
@@ -168,9 +192,10 @@ namespace CMS.Domain.Storage.Services
         public IEnumerable<TeacherGridModel> GetTeacherData(out int totalRecords, string filterFirstName,
            string filterLastName, int userId, int? limitOffset, int? limitRowCount, string orderBy, bool desc)
         {
-            int BranchId = userId;
+            int BranchId = 0;
+                   
             var query = _repository.Project<Teacher, IQueryable<TeacherGridModel>>(teachers => (
-           from t in teachers
+           from t in teachers 
            select new TeacherGridModel
            {
                TId = t.TId,
@@ -183,11 +208,16 @@ namespace CMS.Domain.Storage.Services
                IsActive = t.IsActive,
                UserId = t.UserId,
                BranchId = t.BranchId,
+               ClientId = t.ClientId,
                CreatedOn = t.CreatedOn,
                Qualification=t.Qualification
 
            })).AsQueryable();
-
+                
+            if (userId != 0)
+            {
+                query = query.Where(p => p.ClientId == userId);
+            }
             if (BranchId != 0)
             {
                 query = query.Where(p => p.BranchId == BranchId);

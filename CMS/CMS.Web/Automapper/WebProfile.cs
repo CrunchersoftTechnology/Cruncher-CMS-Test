@@ -28,7 +28,9 @@ namespace CMS.Web.Automapper
                 .ForMember(dest => dest.ClassId, opts => opts.MapFrom(src => src.ClassId))
                 .ForMember(dest => dest.ClassName, opts => opts.MapFrom(src => src.ClassName))
                 .ForMember(x => x.Subjects, y => y.Ignore())
-                .ForMember(x => x.Classes, y => y.Ignore());
+                .ForMember(x => x.Classes, y => y.Ignore())
+                .ForMember(dest => dest.CurrentUserRole, y => y.Ignore())
+                .ForMember(dest => dest.Clients, y => y.Ignore());
 
             CreateMap<BatchProjection, BatchViewModel>()
                 .ForMember(dest => dest.BatchId, opts => opts.MapFrom(src => src.BatchId))
@@ -38,10 +40,8 @@ namespace CMS.Web.Automapper
                 .ForMember(dest => dest.ClassId, opts => opts.MapFrom(src => src.ClassId))
                 .ForMember(dest => dest.ClassName, opts => opts.MapFrom(src => src.ClassName))
                 .ForMember(x => x.Classes, y => y.Ignore())
-                .ForMember(dest => dest.SelectedClasses, opts => opts.MapFrom(src => src.SelectedClasses))
-              .ForMember(dest => dest.CurrentUserRole, y => y.Ignore())
+                 .ForMember(dest => dest.CurrentUserRole, y => y.Ignore())
                 .ForMember(dest => dest.Clients, y => y.Ignore());
-
 
             CreateMap<SubjectProjection, SubjectViewModel>()
                 .ForMember(dest => dest.ClientId, opts => opts.MapFrom(src => src.ClientId))
@@ -78,7 +78,7 @@ namespace CMS.Web.Automapper
                 .ForMember(dest => dest.ReceiptBookNumber, opts => opts.MapFrom(src => src.ReceiptBookNumber))
                 .ForMember(dest => dest.ReceiptNumber, opts => opts.MapFrom(src => src.ReceiptNumber))
                 .ForMember(dest => dest.BranchId, opts => opts.MapFrom(src => src.BranchId))
-                .ForMember(dest => dest.BranchName, opts => opts.MapFrom(src => src.BranchName))          
+                .ForMember(dest => dest.BranchName, opts => opts.MapFrom(src => src.BranchName))
                 .ForMember(x => x.ParentContact, opts => opts.MapFrom(src => src.ParentContact))
                 .ForMember(x => x.StudentContact, opts => opts.MapFrom(src => src.StudentContact))
                 .ForMember(x => x.ParentAppPlayerId, opts => opts.MapFrom(src => src.ParentAppPlayerId))
@@ -93,7 +93,8 @@ namespace CMS.Web.Automapper
                 .ForMember(x => x.SMS, y => y.Ignore())
                 .ForMember(x => x.AppNotification, y => y.Ignore())
                 .ForMember(x => x.RemainingFeeFinal, y => y.Ignore())
-                .ForMember(x => x.InstallmentNo, y => y.Ignore());
+                .ForMember(x => x.InstallmentNo, y => y.Ignore())
+                .ForMember(x => x.Clients, y => y.Ignore());
 
             CreateMap<MasterFeeProjection, MasterFeeViewModel>()
                 .ForMember(dest => dest.MasterFeeId, opts => opts.MapFrom(src => src.MasterFeeId))
@@ -104,10 +105,14 @@ namespace CMS.Web.Automapper
                 .ForMember(dest => dest.ClassName, opts => opts.MapFrom(src => src.ClassName))
                 .ForMember(dest => dest.SubjectName, opts => opts.MapFrom(src => src.SubjectName))
                 .ForMember(x => x.Classes, y => y.Ignore())
-                .ForMember(x => x.Subjects, y => y.Ignore());
+                .ForMember(x => x.Subjects, y => y.Ignore())
+                .ForMember(dest => dest.CurrentUserRole, y => y.Ignore())
+                .ForMember(dest => dest.Clients, y => y.Ignore());
 
             CreateMap<StudentProjection, StudentViewModel>()
                 .ForMember(x => x.BatchId, opts => opts.MapFrom(src => src.BatchId))
+                 .ForMember(x => x.ClientId, opts => opts.MapFrom(src => src.ClientId))
+                  .ForMember(x => x.ClientName, opts => opts.MapFrom(src => src.ClientName))
                 .ForMember(x => x.SubjectId, opts => opts.MapFrom(src => src.SubjectId))
                 .ForMember(x => x.ClassId, opts => opts.MapFrom(src => src.ClassId))
                 .ForMember(x => x.BoardId, opts => opts.MapFrom(src => src.BoardId))
@@ -141,9 +146,10 @@ namespace CMS.Web.Automapper
                 .ForMember(x => x.PunchId, opts => opts.MapFrom(src => src.PunchId))
                 .ForMember(x => x.SchoolId, opts => opts.MapFrom(src => src.SchoolId))
                 .ForMember(x => x.BatchName, opts => opts.MapFrom(src => src.BatchName))
-                .ForMember(dest => dest.BranchId, opts => opts.MapFrom(src => src.BranchId))                
+                .ForMember(dest => dest.BranchId, opts => opts.MapFrom(src => src.BranchId))
                 .ForMember(dest => dest.BranchName, opts => opts.MapFrom(src => src.BranchName))
                 .ForMember(x => x.Branches, y => y.Ignore())
+                .ForMember(x => x.Clients, y => y.Ignore())
                 .ForMember(x => x.Boards, y => y.Ignore())
                 .ForMember(x => x.Classes, y => y.Ignore())
                 .ForMember(x => x.Subjects, y => y.Ignore())
@@ -159,6 +165,8 @@ namespace CMS.Web.Automapper
                 .ForMember(x => x.PaymentNo, y => y.Ignore())
                 .ForMember(x => x.PaymentLists, y => y.Ignore())
                 .ForMember(x => x.PaymentErrorMessage, y => y.Ignore());
+             
+
 
             CreateMap<StudentProjection, StudentEditViewModel>()
                 .ForMember(x => x.BatchId, opts => opts.MapFrom(src => src.BatchId))
@@ -195,9 +203,13 @@ namespace CMS.Web.Automapper
                 .ForMember(x => x.SchoolId, opts => opts.MapFrom(src => src.SchoolId))
                 .ForMember(dest => dest.BranchId, opts => opts.MapFrom(src => src.BranchId))
                 .ForMember(dest => dest.BranchName, opts => opts.MapFrom(src => src.BranchName))
+
+                 .ForMember(dest => dest.ClientId, opts => opts.MapFrom(src => src.ClientId))
+                .ForMember(dest => dest.ClientName, opts => opts.MapFrom(src => src.ClientName))
                 .ForMember(x => x.BatchName, opts => opts.MapFrom(src => src.BatchName))
                 .ForMember(x => x.PaymentLists, opts => opts.MapFrom(src => src.PaymentLists))
                 .ForMember(x => x.Branches, y => y.Ignore())
+                .ForMember(x => x.Clients, y => y.Ignore())
                 .ForMember(x => x.Boards, y => y.Ignore())
                 .ForMember(x => x.Classes, y => y.Ignore())
                 .ForMember(x => x.Subjects, y => y.Ignore())
@@ -206,6 +218,7 @@ namespace CMS.Web.Automapper
                 .ForMember(x => x.CurrentUserRole, y => y.Ignore())
                 .ForMember(x => x.Batches, y => y.Ignore())
                 .ForMember(x => x.PaymentNo, y => y.Ignore())
+                
                 .ForMember(x => x.PaymentErrorMessage, y => y.Ignore());
 
             CreateMap<QuestionProjection, QuestionDataViewModel>()
@@ -321,10 +334,13 @@ namespace CMS.Web.Automapper
                 .ForMember(x => x.Description, opts => opts.MapFrom(src => src.Description))
                 .ForMember(dest => dest.BranchId, opts => opts.MapFrom(src => src.BranchId))
                 .ForMember(dest => dest.BranchName, opts => opts.MapFrom(src => src.BranchName))
+                .ForMember(dest => dest.ClientId, opts => opts.MapFrom(src => src.ClientId))
+                .ForMember(dest => dest.ClientName, opts => opts.MapFrom(src => src.ClientName))
                 .ForMember(dest => dest.IsActive, opts => opts.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.Qualification, opts => opts.MapFrom(src => src.Qualification))
                 .ForMember(x => x.CurrentUserRole, y => y.Ignore())
-                .ForMember(x => x.Branches, y => y.Ignore());
+                .ForMember(x => x.Branches, y => y.Ignore())
+            .ForMember(x => x.Clients, y => y.Ignore());
 
             CreateMap<TeacherProjection, TeacherEditViewModel>()
             .ForMember(x => x.FirstName, opts => opts.MapFrom(src => src.FirstName))
@@ -353,10 +369,13 @@ namespace CMS.Web.Automapper
            .ForMember(dest => dest.TeacherName, opts => opts.MapFrom(src => src.TeacherName))
            .ForMember(dest => dest.BranchId, opts => opts.MapFrom(src => src.BranchId))
            .ForMember(dest => dest.BranchName, opts => opts.MapFrom(src => src.BranchName))
+                .ForMember(dest => dest.ClientId, opts => opts.MapFrom(src => src.ClientId))
+           .ForMember(dest => dest.ClientName, opts => opts.MapFrom(src => src.ClientName))
            .ForMember(dest => dest.SelectedAttendance, opts => opts.MapFrom(src => src.StudentAttendence))
            .ForMember(dest => dest.InTime, opts => opts.MapFrom(src => src.InTime))
            .ForMember(dest => dest.OutTime, opts => opts.MapFrom(src => src.OutTime))
            .ForMember(x => x.Branches, y => y.Ignore())
+           .ForMember(dest => dest.Clients, y => y.Ignore())
            .ForMember(x => x.Classes, y => y.Ignore())
            .ForMember(x => x.Teachers, y => y.Ignore())
            .ForMember(x => x.Batches, y => y.Ignore())
@@ -444,8 +463,10 @@ namespace CMS.Web.Automapper
                 .ForMember(dest => dest.ClientName, opts => opts.MapFrom(src => src.ClientName))
                 .ForMember(dest => dest.SchoolId, opts => opts.MapFrom(src => src.SchoolId))
                 .ForMember(dest => dest.Name, opts => opts.MapFrom(src => src.Name))
+                .ForMember(dest => dest.CenterNumber, opts => opts.MapFrom(src => src.CenterNumber))
                 .ForMember(dest => dest.CurrentUserRole, y => y.Ignore())
                 .ForMember(dest => dest.Clients, y => y.Ignore());
+
 
             CreateMap<BranchAdminProjection, BranchAdminViewModel>()
                 .ForMember(dest => dest.BId, opts => opts.MapFrom(src => src.AId))
@@ -523,24 +544,29 @@ namespace CMS.Web.Automapper
                .ForMember(dest => dest.ParentCount, opts => opts.MapFrom(src => src.ParentCount))
                .ForMember(dest => dest.TeacherCount, opts => opts.MapFrom(src => src.TeacherCount))
                .ForMember(dest => dest.BranchAdminCount, opts => opts.MapFrom(src => src.BranchAdminCount))
+                 
                .ForMember(dest => dest.CreatedOn, opts => opts.MapFrom(src => src.CreatedOn))
                .ForMember(dest => dest.NotificationAutoDate, opts => opts.MapFrom(src => src.NotificationAutoDate))
                .ForMember(dest => dest.Student, opts => opts.Ignore())
                .ForMember(dest => dest.Parent, opts => opts.Ignore())
                .ForMember(dest => dest.Teacher, opts => opts.Ignore())
                .ForMember(dest => dest.BranchAdmin, opts => opts.Ignore())
+                 .ForMember(dest => dest.ClientAdmin, opts => opts.Ignore())
                 .ForMember(dest => dest.ClientAdmin, opts => opts.Ignore())
                .ForMember(dest => dest.Email, opts => opts.Ignore())
                .ForMember(dest => dest.SMS, opts => opts.Ignore())
                .ForMember(dest => dest.AppNotification, opts => opts.Ignore())
                .ForMember(dest => dest.BranchId, opts => opts.Ignore())
+                 .ForMember(dest => dest.ClientId, opts => opts.Ignore())
                .ForMember(dest => dest.ClassId, opts => opts.Ignore())
                .ForMember(dest => dest.BatchId, opts => opts.Ignore())
                .ForMember(dest => dest.Branches, opts => opts.Ignore())
+                  .ForMember(dest => dest.Clients, opts => opts.Ignore())
                .ForMember(dest => dest.Classes, opts => opts.Ignore())
                .ForMember(dest => dest.Batches, opts => opts.Ignore())
                .ForMember(dest => dest.CurrentUserRole, opts => opts.Ignore())
-               .ForMember(dest => dest.BranchName, opts => opts.Ignore());
+               .ForMember(dest => dest.BranchName, opts => opts.Ignore())
+             .ForMember(dest => dest.ClientName, opts => opts.Ignore());
 
             CreateMap<ArrangeTestProjection, ArrangeTestViewModel>();
 
@@ -572,11 +598,14 @@ namespace CMS.Web.Automapper
             .ForMember(x => x.ClassId, y => y.Ignore())
             .ForMember(x => x.BatchId, y => y.Ignore())
             .ForMember(x => x.BranchId, y => y.Ignore())
+             .ForMember(x => x.ClientId, y => y.Ignore())
             .ForMember(x => x.Classes, y => y.Ignore())
             .ForMember(x => x.Branches, y => y.Ignore())
+             .ForMember(x => x.Clients, y => y.Ignore())
             .ForMember(x => x.Batches, y => y.Ignore())
             .ForMember(x => x.CurrentUserRole, y => y.Ignore())
-            .ForMember(x => x.BranchName, y => y.Ignore());
+            .ForMember(x => x.BranchName, y => y.Ignore())
+              .ForMember(x => x.ClientName, y => y.Ignore());
 
             CreateMap<StudentTimetableProjection, StudentTimetableEditViewModel>()
                 .ForMember(x => x.StudentTimetableId, opts => opts.MapFrom(src => src.StudentTimetableId))
@@ -652,9 +681,12 @@ namespace CMS.Web.Automapper
               .ForMember(x => x.Subjects, y => y.Ignore())
               .ForMember(x => x.Classes, y => y.Ignore())
               .ForMember(x => x.BranchName, y => y.Ignore())
+                  .ForMember(x => x.ClientName, y => y.Ignore())
               .ForMember(x => x.BatchId, y => y.Ignore())
               .ForMember(x => x.BranchId, y => y.Ignore())
               .ForMember(x => x.Branches, y => y.Ignore())
+                .ForMember(x => x.ClientId, y => y.Ignore())
+              .ForMember(x => x.Clients, y => y.Ignore())
               .ForMember(x => x.Batches, y => y.Ignore())
               .ForMember(x => x.SMS, y => y.Ignore())
               .ForMember(x => x.AppNotification, y => y.Ignore())
@@ -679,9 +711,12 @@ namespace CMS.Web.Automapper
                 .ForMember(x => x.Subjects, y => y.Ignore())
                 .ForMember(x => x.Classes, y => y.Ignore())
                 .ForMember(x => x.BranchName, y => y.Ignore())
+                   .ForMember(x => x.ClientName, y => y.Ignore())
                 .ForMember(x => x.BatchId, y => y.Ignore())
                 .ForMember(x => x.BranchId, y => y.Ignore())
                 .ForMember(x => x.Branches, y => y.Ignore())
+                    .ForMember(x => x.ClientId, y => y.Ignore())
+                .ForMember(x => x.Clients, y => y.Ignore())
                 .ForMember(x => x.Batches, y => y.Ignore())
                 .ForMember(x => x.SMS, y => y.Ignore())
                 .ForMember(x => x.AppNotification, y => y.Ignore())

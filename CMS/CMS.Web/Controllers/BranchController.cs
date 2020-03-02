@@ -33,9 +33,11 @@ namespace CMS.Web.Controllers
         // GET: Branch
         public ActionResult Index()
         {
+
             var roleUserId = User.Identity.GetUserId();
             var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+       
 
             if (roles == "Admin")
             {

@@ -8,6 +8,7 @@ using CMS.Web.Logger;
 using CMS.Web.Models;
 using CMS.Web.ViewModels;
 using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -26,8 +27,9 @@ namespace CMS.Web.Controllers
         readonly IMasterFeeService _masterFeeService;
         readonly IEmailService _emailService;
         readonly IAspNetRoles _aspNetRolesService;
+        readonly IClientAdminService _clientAdminService;
 
-        public MasterFeeController(IClassService classService, ILogger logger, IRepository repository,
+        public MasterFeeController(IClientAdminService clientAdminService,IClassService classService, ILogger logger, IRepository repository,
             ISubjectService subjectService, IMasterFeeService masterFeeService, IEmailService emailService, IAspNetRoles aspNetRolesService)
         {
             _classService = classService;
@@ -37,11 +39,16 @@ namespace CMS.Web.Controllers
             _masterFeeService = masterFeeService;
             _emailService = emailService;
             _aspNetRolesService = aspNetRolesService;
+            _clientAdminService = clientAdminService;
         }
 
         // GET: MasterFee
-        public ActionResult Index(int? subjectId, int? classId)
+        public ActionResult Index( int? subjectId, int? classId)
         {
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+
             ViewBag.ClassList = (from c in _classService.GetClasses()
                                  select new SelectListItem
                                  {
@@ -54,17 +61,18 @@ namespace CMS.Web.Controllers
             var viewModelList = AutoMapper.Mapper.Map<List<MasterFeeProjection>, MasterFeeViewModel[]>(masterFee);
             ViewBag.ClassId = classId;
             ViewBag.SubjectId = subjectId;
-
-            var roleUserId = User.Identity.GetUserId();
-            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
             ViewBag.userRole = roles;
-             if (roles == "Admin" || roles=="Client")
+
+
+
+            ViewBag.userRole = roles;
+             if (roles == "Admin" )
             {
                 ViewBag.userId = 0;
             }
             else
             {
-                ViewBag.userId ="";
+                ViewBag.userId = projection.ClientId;
             }
 
             return View(viewModelList);
@@ -72,10 +80,32 @@ namespace CMS.Web.Controllers
 
         public ActionResult Create()
         {
-            var classes = _classService.GetClasses().ToList();
-            var viewModel = new MasterFeeViewModel();
-            viewModel.Classes = new SelectList(classes, "ClassId", "Name");
-            return View(viewModel);
+
+            var roleUserId = User.Identity.GetUserId();
+            var roles = _aspNetRolesService.GetCurrentUserRole(roleUserId);
+            var projection = roles == "Client" ? _clientAdminService.GetClientAdminById(roleUserId) : null;
+            if (roles == "Admin")
+            {
+                var classes = _classService.GetClasses().ToList();
+                var viewModel = new MasterFeeViewModel();
+                viewModel.Classes = new SelectList(classes, "ClassId", "Name");
+                return View(viewModel);
+            }
+
+            else if (roles == "Client")
+            {
+                var classes = _classService.GetClassesByClientId(Convert.ToInt32(projection.ClientId)).ToList();
+                var viewModel = new MasterFeeViewModel();
+                viewModel.Classes = new SelectList(classes, "ClassId", "Name");
+                return View(new MasterFeeViewModel
+                {
+                    Classes = viewModel.Classes,
+                    CurrentUserRole = roles,
+                    ClientId = projection.ClientId,
+                    ClientName = projection.ClientName
+                });
+            }
+            return View();
         }
 
         [HttpPost]
@@ -84,10 +114,18 @@ namespace CMS.Web.Controllers
         {
             ViewBag.ClassId = viewModel.ClassId;
             ViewBag.SubjectId = viewModel.SubjectId;
+            //var classes = _classService.GetClasses().ToList();
+            var roles = viewModel.CurrentUserRole;
+            var clientId = viewModel.ClientId;
+            var clientName = viewModel.ClientName;
+
+           
+           
             if (ModelState.IsValid)
             {
-                var result = _masterFeeService.Save(new MasterFee
+                var result = _masterFeeService.Save(clientId,new MasterFee
                 {
+                    
                     ClassId = viewModel.ClassId,
                     SubjectId = viewModel.SubjectId,
                     Year = viewModel.Year,

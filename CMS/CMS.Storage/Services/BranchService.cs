@@ -61,6 +61,21 @@ namespace CMS.Domain.Storage.Services
         {
             return _repository.Project<Branch, BranchProjection[]>(
                 branches => (from branch in branches
+
+                             select new BranchProjection
+                             {
+                                 BranchId = branch.BranchId,
+                                 Name = branch.Name,
+                                 Address = branch.Address
+                             }).ToArray());
+        }
+
+
+        public IEnumerable<BranchProjection> GetAllBranchesByClientId(int ClientId)
+        {
+            return _repository.Project<Branch, BranchProjection[]>(
+                branches => (from branch in branches 
+                             where branch.ClientId==ClientId
                              select new BranchProjection
                              {
                                  BranchId = branch.BranchId,
@@ -190,8 +205,7 @@ namespace CMS.Domain.Storage.Services
         {
             int ClientId = userId;
             var query = _repository.Project<Branch, IQueryable<BranchGridModel>>(Branches => (
-                 from b in Branches
-                
+                 from b in Branches                
                  select new BranchGridModel
                  {
                      UserId = b.UserId,

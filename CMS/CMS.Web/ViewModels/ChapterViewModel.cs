@@ -6,6 +6,11 @@ namespace CMS.Web.ViewModels
 {
     public class ChapterViewModel
     {
+
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
+
         public int ChapterId { get; set; }
 
         [Required]
@@ -37,5 +42,12 @@ namespace CMS.Web.ViewModels
 
         [Display(Name = "Class")]
         public string ClassName { get; set; }
+
+
+        public string CurrentUserRole { get; set; }
+
+
+        [Display(Name = "Client")]
+        public IEnumerable<SelectListItem> Clients { get; set; }
     }
 }

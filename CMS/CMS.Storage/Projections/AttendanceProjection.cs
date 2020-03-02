@@ -28,6 +28,11 @@ namespace CMS.Domain.Storage.Projections
 
         public string BranchName { get; set; }
 
+
+        public int ClientId { get; set; }
+
+        public string ClientName { get; set; }
+
         public string SubjectName { get; set; }
 
         public string InTime { get; set; }

@@ -60,7 +60,6 @@ namespace CMS.Web.Controllers
             ViewBag.ClassId =id;
             var subjects = id == null ? _subjectService.GetAllSubjects().ToList() : _subjectService.GetSubjects((int)id).ToList();
             var viewModelList = AutoMapper.Mapper.Map<List<SubjectProjection>, SubjectViewModel[]>(subjects);
-            //return View(viewModelList);
 
             if (roles == "Admin")
             {
@@ -81,7 +80,6 @@ namespace CMS.Web.Controllers
             var classes = _classService.GetClassesByClientId(Convert.ToInt32(projection.ClientId)).ToList();
             var viewModel = new SubjectViewModel();
             viewModel.Classes = new SelectList(classes, "ClassId", "Name");
-
 
             if (roles == "Admin")
             {

@@ -41,6 +41,7 @@ namespace CMS.Domain.Storage.Services
                                  where b.UserId == branchAdminId
                                  select new BranchAdminProjection
                                  {
+
                                      BranchId = b.BranchId,
                                      BranchName = b.Branch.Name,
                                      Email = b.User.Email,
@@ -50,6 +51,9 @@ namespace CMS.Domain.Storage.Services
                                      Active = b.Active
                                  }).FirstOrDefault());
         }
+
+      
+
 
         public CMSResult Update(BranchAdmin branchAdmin)
         {

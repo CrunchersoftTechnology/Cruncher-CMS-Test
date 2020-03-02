@@ -516,8 +516,8 @@ namespace CMS.Web
             {
                 var options = context.QueryOptions;
                 int totalRecords;
-                var repo = DependencyResolver.Current.GetService<IBatchService>();
                 int userId = Convert.ToInt32(options.GetPageParameterString("userRole"));
+                var repo = DependencyResolver.Current.GetService<IBatchService>();
                 string globalSearch = options.GetAdditionalQueryOptionString("search");
                 string sortColumn = options.GetSortColumnData<string>();
                 var items = repo.GetBatchDataByClientId(out totalRecords, Convert.ToInt16(options.GetFilterString("ClassName")), userId,
@@ -582,10 +582,11 @@ namespace CMS.Web
             {
                 var options = context.QueryOptions;
                 int totalRecords;
+                int userId = Convert.ToInt32(options.GetPageParameterString("userRole"));
                 var repo = DependencyResolver.Current.GetService<IChapterService>();
                 string globalSearch = options.GetAdditionalQueryOptionString("search");
                 string sortColumn = options.GetSortColumnData<string>();
-                var items = repo.GetChapterData(out totalRecords, Convert.ToInt16(options.GetFilterString("ClassName")), Convert.ToInt16(options.GetFilterString("SubjectName")),
+                var items = repo.GetChapterDataByClientId(out totalRecords, Convert.ToInt16(options.GetFilterString("ClassName")), Convert.ToInt16(options.GetFilterString("SubjectName")), userId,
                                 options.GetLimitOffset(), options.GetLimitRowcount(),
                     sortColumn, options.SortDirection == SortDirection.Dsc);
                 return new QueryResult<ChapterGridModel>()
@@ -946,10 +947,11 @@ namespace CMS.Web
             {
                 var options = context.QueryOptions;
                 int totalRecords;
+                int userId = Convert.ToInt32(options.GetPageParameterString("userRole"));
                 var repo = DependencyResolver.Current.GetService<IMasterFeeService>();
                 string globalSearch = options.GetAdditionalQueryOptionString("search");
                 string sortColumn = options.GetSortColumnData<string>();
-                var items = repo.GetMasterFeeData(out totalRecords, Convert.ToInt16(options.GetFilterString("ClassName")), Convert.ToInt16(options.GetFilterString("SubjectName")), options.GetLimitOffset(), options.GetLimitRowcount(),
+                var items = repo.GetMasterFeeDataByClientId(out totalRecords, Convert.ToInt16(options.GetFilterString("ClassName")), Convert.ToInt16(options.GetFilterString("SubjectName")), userId, options.GetLimitOffset(), options.GetLimitRowcount(),
                     sortColumn, options.SortDirection == SortDirection.Dsc);
                 return new QueryResult<MasterFeeGridModel>()
                 {
